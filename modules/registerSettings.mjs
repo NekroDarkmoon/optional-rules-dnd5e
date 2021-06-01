@@ -27,7 +27,13 @@ export const RegisterSettings = async function(moduleName) {
     });
     
     // Settings for proficiency die 
-    // await game.settings.register
+    await game.settings.register(moduleName, 'use-prof-die', {
+        name: "Use Proficiency die rules",
+        scope: 'world',
+        config: true,
+        type: String,
+        onChange: debounceReload
+    })
 };
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
