@@ -26,6 +26,8 @@ export const RegisterSettings = async function(moduleName) {
         onChange: tableExists
     });
     
+    // Settings for proficiency die 
+    // await game.settings.register
 };
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
