@@ -24,7 +24,7 @@
     "index.js"
   ],
   "scripts": [
-    "/modules/lib/lib.js"
+    
   ],
   "styles": [
     "/styles/module.css"

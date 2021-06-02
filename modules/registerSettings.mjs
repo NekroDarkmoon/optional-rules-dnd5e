@@ -26,6 +26,15 @@ export const RegisterSettings = async function(moduleName) {
         onChange: tableExists
     });
     
+    // Settings for Hero Points
+    await game.settings.register(moduleName, 'use-hero-points', {
+        name: "Use Hero Points",
+        scope: 'world',
+        config: true,
+        type: String,
+        onChange: debounceReload
+    });
+
     // Settings for proficiency die 
     await game.settings.register(moduleName, 'use-prof-die', {
         name: "Use Proficiency die rules",
@@ -33,7 +42,7 @@ export const RegisterSettings = async function(moduleName) {
         config: true,
         type: String,
         onChange: debounceReload
-    })
+    });
 };
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
