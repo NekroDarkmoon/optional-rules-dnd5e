@@ -50,6 +50,10 @@ export const RegisterSettings = async function() {
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //                                 Helper Functions 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/**
+ * 
+ * @param tableName 
+ */
 const tableExists = function (tableName) {
     let rollTable = game.tables.getName(tableName);
     if (rollTable == undefined) {

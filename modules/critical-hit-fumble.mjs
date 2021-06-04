@@ -1,8 +1,11 @@
 import {moduleName, moduleTag} from "./constants.js";
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//                                    Export 
+//                             Initilization Function 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/**
+ * 
+ */
 export var CritHitFumble = async function(){
 
     Hooks.on('midi-qol.AttackRollComplete', async (midiData) => {
@@ -24,6 +27,11 @@ export var CritHitFumble = async function(){
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //                                 Crit Fumble Roll 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/**
+ * 
+ * @param trigger 
+ * @returns 
+ */
 async function critFumbleRoll(trigger) {
     
     var roll;

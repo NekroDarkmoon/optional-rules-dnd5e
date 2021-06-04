@@ -5,11 +5,13 @@ This module aims to automate all the optional rules available in the official bo
 ## Supported Rules
 Below is a list of the current optional rules that the module automates.
 - Critical Hit and Fumble Rules.
+- Proficiency Die Rules. 
 
 ## Dependencies
 Some of the optional rules depend on other modules. While it is not required to install all the dependencies, it's recommended to do so. Nonetheless, if you're only using certain rules, you can just install the dependecies for the particular rule.
 
-- Critical Hit and Fumble --> MidiQol
+- Critical Hit and Fumble --> MidiQol.
+- Proficiency Die [Currently has a conflict with DAE].
 
 
 ## Installation Guide
@@ -18,3 +20,6 @@ https://github.com/NekroDarkmoon/optional-rules-dnd5e/releases/download/0.0.2/mo
 
 
 ## Changelog
+#### V-0.0.2
+- Added settings for the hero points feature for future development.
+- Added support for Proficiency Die Rules. (Currently conflicts with DAE).

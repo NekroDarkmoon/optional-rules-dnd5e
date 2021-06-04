@@ -8,6 +8,11 @@ import { d20Roll } from "../../../../systems/dnd5e/module/dice.js";
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //                                 Wrapped Functions
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/**
+ * 
+ * @param wrapped 
+ * @returns 
+ */
 function getRollData(wrapped) {
     const data = wrapped();
     let level = data?.details?.level;
@@ -24,8 +29,13 @@ function getRollData(wrapped) {
     return data;
 }
 
-
-function rollAbilitySave(wrapped, ...args) {
+/**
+ * 
+ * @param wrapper 
+ * @param args 
+ * @returns 
+ */
+function rollAbilitySave(wrapper, ...args) {
   const [ abilityId, options={event: {}, parts: []} ] = args;
   const label = CONFIG.DND5E.abilities[abilityId];
 
@@ -67,20 +77,23 @@ function rollAbilitySave(wrapped, ...args) {
     }
   });
 
+  console.log(wrapper);
   return d20Roll(rollData);
 }
 
 
+/**
+ * 
+ * @param wrapper 
+ * @param args 
+ * @returns 
+ */
 
-
-function rollSkill(wrapped, ...args) {
+function rollSkill(wrapper, ...args) {
   const [ skillId, options = {event: {}, parts: []} ] = args;
   const skl = this.data.data.skills[skillId];
   const bonuses = getProperty(this.data.data, "bonuses.abilities") || {};
   
-  console.log(this);
-  console.log(skl);
-
   // Compose roll parts and data
   const charProf = this?.data?.data?.prof;
   const level = this?.data?.data?.details?.level;
