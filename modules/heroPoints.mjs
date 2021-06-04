@@ -1,12 +1,9 @@
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //                                    Imports 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-var moduleName;
+import {moduleName, moduleTag} from "./constants.js";
 
-export const heroPoints = async function(name) {
-    moduleName = name;
-
-
+export const heroPoints = async function() {
 };
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -27,7 +24,7 @@ class HeroPoints {
     calcHeroPoints() {
         // Get class level
         let level = this.actor.data.data.details.level;
-        let hp = 5 + Math.ceil(level / 2);
+        let hp = 5 + Math.floor(level / 2);
         return hp;
     }
 

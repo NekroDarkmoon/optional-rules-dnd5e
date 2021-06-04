@@ -1,4 +1,6 @@
-export const RegisterSettings = async function(moduleName) {
+import { moduleName, moduleTag} from "./constants.js";
+
+export const RegisterSettings = async function() {
 
     // Settings for critical hit and fumble tables
     await game.settings.register(moduleName, 'use-crit-hit-fumble', {
@@ -31,7 +33,7 @@ export const RegisterSettings = async function(moduleName) {
         name: "Use Hero Points",
         scope: 'world',
         config: true,
-        type: String,
+        type: Boolean,
         onChange: debounceReload
     });
 
@@ -40,7 +42,7 @@ export const RegisterSettings = async function(moduleName) {
         name: "Use Proficiency die rules",
         scope: 'world',
         config: true,
-        type: String,
+        type: Boolean,
         onChange: debounceReload
     });
 };
@@ -51,7 +53,7 @@ export const RegisterSettings = async function(moduleName) {
 const tableExists = function (tableName) {
     let rollTable = game.tables.getName(tableName);
     if (rollTable == undefined) {
-        ui.notifications.error(`Optional Rules Dnd5e | RollTable named ${tableName} not found.`)
+        ui.notifications.error(`${moduleTag} | RollTable named ${tableName} not found.`)
     }
 };
 

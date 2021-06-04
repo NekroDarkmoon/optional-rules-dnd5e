@@ -1,49 +1,138 @@
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//                                    Imports 
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+import { moduleName, moduleTag} from "./constants.js";
 import { libWrapper } from "./lib/shim.js";
 import { d20Roll } from "../../../../systems/dnd5e/module/dice.js";
-
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//                                    Export 
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-var moduleName;
-
-export const ProfDie = async function(name) {
-    moduleName = name;
-
-    
-
-}
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//                         Set Up Char Sheets with new Prof 
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-export const ProfDieSheetUpdate = function() {
-
-}
-
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //                                 Wrapped Functions
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 function getRollData(wrapped) {
     const data = wrapped();
-    
     let level = data?.details?.level;
 
     if (level == null || level == undefined) {
         return data;
     }
 
-    // TODO: Change prof die based on level
+    // Get maxdie for prof
+    let maxDie = Math.floor((level + 7) / 4) * 2;
 
-    let newProf = Math.ceil(Math.random() * (4 - 1) + 1);
-    data.prof = newProf; 
-
+    let profDie = `1d${maxDie}`;
+    data.prof = profDie; 
     return data;
 }
+
+
+function rollAbilitySave(wrapped, ...args) {
+  const [ abilityId, options={event: {}, parts: []} ] = args;
+  const label = CONFIG.DND5E.abilities[abilityId];
+
+  const abl = this.data.data.abilities[abilityId];
+  const level = this.data?.data?.details?.level;
+    
+  const parts = ["@mod"];
+  const data = {mod: abl.mod};
+
+  // Change Proficiency for roll here if avaialble.
+  if (abl.prof > 0) {
+    let maxDie = Math.floor((level + 7) / 4) * 2;
+    let profDie = `1d${maxDie}`;
+    parts.push("@prof");
+    data.prof = profDie;
+  }
+
+  // Include a global actor ability save bonus
+  const bonuses = getProperty(this.data.data, "bonuses.abilities") || {};
+  if ( bonuses.save ) {
+    parts.push("@saveBonus");
+    data.saveBonus = bonuses.save;
+  }
+
+  // Add provided extra roll parts now because they will get clobbered by mergeObject below
+  if (options.parts?.length > 0) {
+    parts.push(...options.parts);
+  }
+
+  // Roll and return
+  const rollData = foundry.utils.mergeObject(options, {
+    parts: parts,
+    data: data,
+    title: game.i18n.format("DND5E.SavePromptTitle", {ability: label}),
+    halflingLucky: this.getFlag("dnd5e", "halflingLucky"),
+    messageData: {
+      speaker: options.speaker || ChatMessage.getSpeaker({actor: this}),
+      "flags.dnd5e.roll": {type: "save", abilityId }
+    }
+  });
+
+  return d20Roll(rollData);
+}
+
+
+
+
+function rollSkill(wrapped, ...args) {
+  const [ skillId, options = {event: {}, parts: []} ] = args;
+  const skl = this.data.data.skills[skillId];
+  const bonuses = getProperty(this.data.data, "bonuses.abilities") || {};
+  
+  console.log(this);
+  console.log(skl);
+
+  // Compose roll parts and data
+  const charProf = this?.data?.data?.prof;
+  const level = this?.data?.data?.details?.level;
+  var profDie = "";
+  let maxDie = Math.floor((level + 7) / 4) * 2;
+
+  if (skl.prof === 2*charProf) {
+    profDie = `2d${maxDie}`;
+  } else if (skl.prof === charProf){
+    profDie = `1d${maxDie}`;
+  } else {
+    profDie = skl.prof;
+  }
+
+  const parts = ["@profDie", "@mod"];
+  const data = {profDie: profDie, mod: skl.mod };
+
+  if (bonuses.check) {
+    data["checkBonus"] = bonuses.check;
+    parts.push("@checkBonus");
+  }
+
+  // Add provided extra roll parts now because they will get clobbered by mergeObject below
+  if (options.parts?.length > 0) {
+    parts.push(...options.parts);
+  }
+
+  // Reliable Talent applies to any skill check we have full or better proficiency in
+  const reliableTalent = (skl.value >= 1 && this.getFlag("dnd5e", "reliableTalent"));
+
+  // Roll and return
+  const rollData = foundry.utils.mergeObject(options, {
+    parts: parts,
+    data: data,
+    title: game.i18n.format("DND5E.SkillPromptTitle", {skill: CONFIG.DND5E.skills[skillId]}),
+    halflingLucky: this.getFlag("dnd5e", "halflingLucky"),
+    reliableTalent: reliableTalent,
+    messageData: {
+      speaker: options.speaker || ChatMessage.getSpeaker({actor: this}),
+      "flags.dnd5e.roll": {type: "skill", skillId }
+    }
+  });
+
+  return d20Roll(rollData);
+}
+
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //                                    Patches
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-export let itemPatching = () => {
+export let diePatching = () => {
     libWrapper.register(moduleName, "CONFIG.Item.documentClass.prototype.getRollData", getRollData, "OVERRIDE", {chain: true});
+    libWrapper.register(moduleName, "CONFIG.Actor.documentClass.prototype.rollAbilitySave", rollAbilitySave, "MIXED", {chain: true});
+    libWrapper.register(moduleName, "CONFIG.Actor.documentClass.prototype.rollSkill", rollSkill, "MIXED", {chain: true});
 }
