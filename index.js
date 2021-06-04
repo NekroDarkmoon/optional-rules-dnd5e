@@ -4,7 +4,7 @@
 import {moduleName, moduleTag} from "./modules/constants.js";
 import {RegisterSettings} from "./modules/registerSettings.mjs";
 import {CritHitFumble} from "./modules/critical-hit-fumble.mjs";
-import { diePatching } from "./modules/proficiencyDie.mjs";
+import { diePatching, diePatchingDAE } from "./modules/proficiencyDie.mjs";
 
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -15,13 +15,7 @@ Hooks.once('init', async function() {
     RegisterSettings();
 });
 
-
-Hooks.once('setup', () => {
-    console.log(`${moduleTag} | Setting up.`)
-});
-
-
-Hooks.once('ready', async function() {
+Hooks.once('setup', async function() {
     // Enable Critical Hit Fumble Rules
     if (await game.settings.get(moduleName, 'use-crit-hit-fumble')) {
         CritHitFumble();
@@ -30,9 +24,20 @@ Hooks.once('ready', async function() {
 
     // Enable Proficiency Die
     if (await game.settings.get(moduleName, 'use-prof-die')) {
-        diePatching();
+        let dae = game.modules.get('dae');
+
+        if (dae?.active) {
+            diePatchingDAE();
+            console.warn(`${moduleTag} | DAE dected. Patching for DAE instead.`);
+        }
+        else {diePatching();}
+        
         console.log(`${moduleTag} | Loaded Proficiency Die System`);
     }
 
-    console.log(`${moduleTag} | Ready`)
+    console.log(`${moduleTag} | Setting Up`)
+});
+
+Hooks.once('ready', async function() {
+    console.log(`${moduleTag} | Ready.`)
 });
