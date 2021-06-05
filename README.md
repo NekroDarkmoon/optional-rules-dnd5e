@@ -3,12 +3,12 @@
 This module aims to automate some of the optional and homebrew rules avaialable for DnD 5e. A list of the supported rules are listed down below. Do note that you will still require the original source books to reference the full set of rules.
 
 
-<sub>This module is created in compliance with WOTC's (fan content policy)[https://company.wizards.com/en/legal/fancontentpolicy] </sub>
+<sub>This module is created in compliance with WOTC's [fan content policy](https://company.wizards.com/en/legal/fancontentpolicy) </sub>
 
 ## Supported Rules
 Below is a list of the current rules that the module automates.
-- Critical hit and Fumble Rules. (DMG)
-- ProficiencyDie . (DMG) 
+- Critical hit and Fumble Rules (DMG).
+- ProficiencyDie (DMG).
 
 
 ## Dependencies
