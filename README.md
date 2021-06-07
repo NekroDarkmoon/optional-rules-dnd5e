@@ -20,10 +20,14 @@ Some of the optional rules depend on other modules. While it is not required to 
 
 ## Installation Guide
 Paste the following link in the install module section of foundry.
-https://github.com/NekroDarkmoon/optional-rules-dnd5e/releases/download/0.0.2/module.json
+https://github.com/NekroDarkmoon/optional-rules-dnd5e/releases/latest/download/module.json
 
 
 ## Changelog
+
+#### V-0.0.5
+- Fixed module.json
+
 #### V-0.0.4
 - Updated Readme.
 

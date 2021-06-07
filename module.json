@@ -1,7 +1,7 @@
 {
   "name": "optional-rules-dnd5e",
   "title": "Optional Rules for Dnd5e",
-  "description": "",
+  "description": "This module aims to automate some of the optional and homebrew rules avaialable for DnD 5e. Do note that you will still require the original source books to reference the full set of rules.",
   "version": "0.0.4",
   "library": "false",
   "manifestPlusVersion": "1.0.0",
@@ -19,14 +19,8 @@
       "name": "lib-wrapper"
     }
   ],
-  "conflicts": [
-    
-  ],
   "esmodules": [
     "index.js"
-  ],
-  "scripts": [
-    
   ],
   "styles": [
     "/styles/module.css"
@@ -40,7 +34,7 @@
   ],
   "url": "https://github.com/NekroDarkmoon/optional-rules-dnd5e",
   "manifest": "https://github.com/NekroDarkmoon/optional-rules-dnd5e/releases/latest/download/module.json",
-  "download": "https://github.com/NekroDarkmoon/optional-rules-dnd5e/releases/latest/download/optional-rules-5e.zip",
+  "download": "https://github.com/NekroDarkmoon/optional-rules-dnd5e/releases/latest/download/optional-rules-dnd5e.zip",
   "media": [
     {
       "type": "icon",
