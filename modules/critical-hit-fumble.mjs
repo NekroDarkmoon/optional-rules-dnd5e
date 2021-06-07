@@ -12,12 +12,12 @@ export var CritHitFumble = async function(){
         //  Check if critcal
         if (midiData.isCritical) {
             console.log("Critical Hit!");
-            critFumbleRoll(moduleName, "Crit");
+            critFumbleRoll("Crit");
         } 
         // Check if fumble
         if (midiData.isFumble) {
             console.log("Critical Faliure!");
-            critFumbleRoll(moduleName, "Fumble");
+            critFumbleRoll("Fumble");
         }
     });
 
