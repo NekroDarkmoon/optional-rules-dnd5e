@@ -12,6 +12,16 @@ export const RegisterSettings = async function() {
         onChange: debounceReload
     });
 
+    await game.settings.register(moduleName, 'crit-fumble-threshold', {
+        name: "Set Critical Fumble Threshold",
+        hint: "Change the triggering threshold for the rolltable roll.",
+        scope: 'world',
+        config: true,
+        type: Number,
+        default: 5,
+        onChange: verifycfThreshold
+    });
+
     await game.settings.register(moduleName, 'crit-hit-rolltable', {
         name: "Critical hit rolltable",
         scope: 'world',
@@ -62,3 +72,11 @@ const tableExists = function (tableName) {
 };
 
 const debounceReload = debounce(() => window.location.reload(), 100);
+
+function verifycfThreshold(threshold) {
+
+    if (threshold > 6 || threshold < 1) {
+        console.error(`${moduleTag} | Incorrect Value set for crti-fumble threshold.`);
+        ui.notifications.error(`${moduleTag} | Crit-Fumble value should be greater than 0 and less than 7`);
+    }
+}

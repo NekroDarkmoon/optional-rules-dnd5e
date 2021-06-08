@@ -16,7 +16,6 @@ import { d20Roll } from "../../../../systems/dnd5e/module/dice.js";
 function getRollData(wrapped) {
     const original = wrapped();
     const data = original;
-    console.log(data);
     let level = data?.details?.level;
 
     if (level == null || level == undefined) {

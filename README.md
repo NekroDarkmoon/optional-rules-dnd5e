@@ -25,6 +25,9 @@ https://github.com/NekroDarkmoon/optional-rules-dnd5e/releases/latest/download/m
 
 ## Changelog
 
+#### V0.0.7
+- Added the option to set the threshold to trigger the critical-hit-fumble rolltables. Default value is 5, max is 6, and min is 1.
+
 #### V-0.0.5
 - Fixed module.json
 
