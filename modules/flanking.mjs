@@ -1,16 +1,47 @@
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//                                    Setting Up
+//                                     Imports
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//                                    Flanking
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+export function Flanking() {
+    
+    Hooks.on('updateToken', async (...args) => {
+        console.log(args);
+        await checkNeighbours(args);
+    });
+    
+}
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //                                    Setting Up
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+async function checkNeighbours(args) {
+    let tokenData = await canvas.tokens.get(args[1]._id);
+    console.log(tokenData);
+    let position = tokenData._validPosition;
+    console.log(position);
 
+    let reach = tokenData.hitArea;
 
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//                                    Setting Up
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    // Check hit area for enemies
+    let range = {
+        x: [position.x + reach.width, position.x - reach.width],
+        y: [position.y + reach.height, position.x + reach.height]
+    } 
 
+    let tokens = canvas.tokens.children[0].children;
+    console.log(tokens);
+
+    let surrounding = [];
+
+    for (let index = 0; index < tokens.length; index++) {
+        const token = tokens[index];
+        
+    }
+
+}
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //                                    Setting Up
