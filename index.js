@@ -5,6 +5,7 @@ import {moduleName, moduleTag} from "./modules/constants.js";
 import {RegisterSettings} from "./modules/registerSettings.mjs";
 import {CritHitFumble} from "./modules/critical-hit-fumble.mjs";
 import { diePatching, diePatchingDAE } from "./modules/proficiencyDie.mjs";
+import { Flanking } from "./modules/flanking.mjs";
 
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -34,6 +35,9 @@ Hooks.once('setup', async function() {
         
         console.log(`${moduleTag} | Loaded Proficiency Die System`);
     }
+
+
+    Flanking();
 
     console.log(`${moduleTag} | Setting Up`)
 });
