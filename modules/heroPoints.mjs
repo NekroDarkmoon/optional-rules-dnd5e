@@ -4,6 +4,14 @@
 import {moduleName, moduleTag} from "./constants.js";
 
 export const heroPoints = async function() {
+    // Fetch Actors
+    let chars = game.actors?._source.filter(u => u.type == "character");
+    if (chars == undefined || chars == null){return;}
+
+    let test = chars[0]._id;
+    console.log(test);
+
+    let hpActor = new HeroPoints(game.actors.get(test));
 };
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -16,8 +24,15 @@ class HeroPoints {
         this.actor = actor;
         
         // Derived data
-        this.heroPoints = calcHeroPoints();
-        
+        // TODO: Check Flag for existing hero points
+        let flag = actor.getFlag(moduleName, 'heroPoints');
+        if (flag == undefined || flag == null) {
+            this.heroPoints = flag;
+        } else {
+            this.heroPoints = this.calcHeroPoints();
+            this.setHpFlag();
+        }
+
     }
 
 
@@ -29,9 +44,20 @@ class HeroPoints {
     }
 
 
+    setHpFlag() {
+        let actorData = this.actor;
+        
+        // Overide exisitng flag
+        try {
+            actorData.setFlag(moduleName, 'heroPoints', this.heroPoints);
+
+        } catch (error) {console.error(error);}
+    }
+
+
 }
 
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//                                    Imports 
+//                                  Patching 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

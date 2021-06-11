@@ -4,6 +4,7 @@
 import {moduleName, moduleTag} from "./modules/constants.js";
 import {RegisterSettings} from "./modules/registerSettings.mjs";
 import {CritHitFumble} from "./modules/critical-hit-fumble.mjs";
+import {heroPoints} from "./modules/heroPoints.mjs";
 import { diePatching, diePatchingDAE } from "./modules/proficiencyDie.mjs";
 
 
@@ -35,9 +36,12 @@ Hooks.once('setup', async function() {
         console.log(`${moduleTag} | Loaded Proficiency Die System`);
     }
 
+
     console.log(`${moduleTag} | Setting Up`)
 });
 
 Hooks.once('ready', async function() {
+    heroPoints();
+    
     console.log(`${moduleTag} | Ready.`)
 });
