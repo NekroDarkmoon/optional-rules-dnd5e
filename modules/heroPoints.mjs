@@ -8,54 +8,45 @@ export const heroPoints = async function() {
     let chars = game.actors?._source.filter(u => u.type == "character");
     if (chars == undefined || chars == null){return;}
 
-    let test = chars[0]._id;
-    console.log(test);
+    let test = game.actors.get(chars[0]._id);
 
-    let hpActor = new HeroPoints(game.actors.get(test));
+    // Set flag if not extsts
+    let flag = getHpFlag(test);
+    if (flag == undefined || flag == null) {
+        setHpFlag(test, calcHeroPoints(test));
+    }
+
+    // Set up display of data
+    // Set up functions for triggers
+
 };
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//                                    Imports 
+//                                 Functions 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-class HeroPoints {
-
-    constructor(actor) {
-        // Given data
-        this.actor = actor;
-        
-        // Derived data
-        // TODO: Check Flag for existing hero points
-        let flag = actor.getFlag(moduleName, 'heroPoints');
-        if (flag == undefined || flag == null) {
-            this.heroPoints = flag;
-        } else {
-            this.heroPoints = this.calcHeroPoints();
-            this.setHpFlag();
-        }
-
-    }
 
 
-    calcHeroPoints() {
-        // Get class level
-        let level = this.actor.data.data.details.level;
-        let hp = 5 + Math.floor(level / 2);
-        return hp;
-    }
-
-
-    setHpFlag() {
-        let actorData = this.actor;
-        
-        // Overide exisitng flag
-        try {
-            actorData.setFlag(moduleName, 'heroPoints', this.heroPoints);
-
-        } catch (error) {console.error(error);}
-    }
-
-
+function calcHeroPoints(actor) {
+    // Get class level
+    let level = actor.data.data.details.level;
+    return (5 + Math.floor(level / 2));
 }
+
+
+function setHpFlag(actor, hp) {
+    try {
+        actor.setFlag(moduleName, 'heroPoints', hp);
+    } catch (error) {console.error(error);}
+}
+
+
+function getHpFlag(actor) {
+    try {
+        actor.getFlag(moduleName, 'heroPoints');
+    } catch (e) {console.error(e);}
+}
+
+
 
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
