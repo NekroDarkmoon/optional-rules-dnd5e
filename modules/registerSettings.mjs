@@ -47,6 +47,14 @@ export const RegisterSettings = async function() {
         onChange: debounceReload
     });
 
+    await game.settings.register(moduleName, 'hero-points-data', {
+        name: "Hero Points Data",
+        scope: 'world',
+        config: false,
+        type: Object
+    });
+
+    
     // Settings for proficiency die 
     await game.settings.register(moduleName, 'use-prof-die', {
         name: "Use Proficiency die rules",
