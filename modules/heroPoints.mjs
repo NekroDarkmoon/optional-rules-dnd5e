@@ -59,7 +59,6 @@ export const heroPoints = async function() {
 //                                 Functions 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-
 function calcHeroPoints(actor) {
     // Get class level
     let level = actor.data.data.details.level;
