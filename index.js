@@ -40,6 +40,7 @@ Hooks.once('setup', async function() {
     console.log(`${moduleTag} | Setting Up`)
 });
 
+
 Hooks.once('ready', async function() {
     heroPoints();
     

@@ -10,33 +10,42 @@ export const heroPoints = async function() {
 
     // Hero points redundacy storage
     let existingHp = game.settings.get(moduleName, 'hero-points-data');
-    var HeroPoints;
+    let lastLevel = game.settings.get(moduleName, 'hero-points-lastSet');
     
-    if (Object.keys(existingHp).length === 0) {HeroPoints = {};}
-    else {
-        HeroPoints = existingHp;
-    }
+    var HeroPoints;
+    var updatedAt;
 
+    if (Object.keys(existingHp).length === 0) {HeroPoints = {};}
+    else {HeroPoints = existingHp;}
+
+    if (Object.keys(lastLevel).length === 0) {updatedAt = {};}
+    else {updatedAt = lastLevel;}    
 
     // Check every Actor for hp 
     for (let index = 0; index < chars.length; index++) {
+        // Get Char data
         const currActor = game.actors.get(chars[index]._id);
-        
+        const prevLevel = updatedAt[currActor.data.name];
+        const currLevel = currActor.data.data.details.level;
+
         // Set flag if not extsts
         let flag = getHpFlag(currActor);
-        console.log(flag);
-        if (flag == undefined || flag == null) {
-
+        if (flag == undefined || flag == null || 
+            Object.keys(existingHp).length === 0 || prevLevel != currLevel) {
             // Check if char exists in settings
             var hp;
             try {
                 hp = HeroPoints[currActor.data.name];
             } catch (e) {
                 console.error(`${moduleTag} | ${e}`);
-                hp = calcHeroPoints(currActor);
+                hp = null;
             }
 
-            if (hp == null || hp == undefined) {hp = calcHeroPoints(currActor);}
+            if (hp == null || hp == undefined || prevLevel == undefined || prevLevel != currLevel) {
+                console.log(`${moduleTag} | Updating Hero Points for ${currActor.data.name}`);
+                hp = calcHeroPoints(currActor);
+                updatedAt[currActor.data.name] = currLevel;
+            }   
 
             setHpFlag(currActor, hp);
             HeroPoints[currActor.data.name] = hp; 
@@ -45,12 +54,16 @@ export const heroPoints = async function() {
 
     // Sync back to settings
     game.settings.set(moduleName, 'hero-points-data', HeroPoints);
+    game.settings.set(moduleName, 'hero-points-lastSet', updatedAt);
     
     console.log(`${moduleTag} | HeroPoints initialized.`);
     console.log(HeroPoints);
+    console.log(updatedAt);
 
 
     // Set up display of data
+    await displayOnSheet(chars);
+
     // Set up functions for triggers
 
 };
@@ -80,6 +93,28 @@ function getHpFlag(actor) {
 }
 
 
+async function displayOnSheet(chars) {
+    for (let index = 0; index < chars.length; index++) {    
+        // Get Char data
+        const currActor = game.actors.get(chars[index]._id);
+        
+        // Set Tertiary value
+        const currHp = getHpFlag(currActor);
+        const totalHp = calcHeroPoints(currActor);
+
+        const newValue = {
+            label: "Hero Points",
+            lr: false,
+            max: totalHp,
+            sr: false,
+            value: currHp
+        }
+
+        await currActor.update({"data.resources.tertiary": newValue});
+        console.warn("Updated");
+
+    }
+}
 
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

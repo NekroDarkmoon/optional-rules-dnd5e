@@ -51,7 +51,16 @@ export const RegisterSettings = async function() {
         name: "Hero Points Data",
         scope: 'world',
         config: false,
-        type: Object
+        type: Object,
+        default: null
+    });
+
+    await game.settings.register(moduleName, 'hero-points-lastSet', {
+        name: "Hero Points Last Set",
+        scope: 'world',
+        config: false,
+        type: Object,
+        default: null
     });
 
     
