@@ -20,7 +20,7 @@ Hooks.once('setup', async function() {
     // Enable Critical Hit Fumble Rules
     if (await game.settings.get(moduleName, 'use-crit-hit-fumble')) {
         CritHitFumble();
-        console.log(`${moduleTag} | Loaded Critcal Hit & Fumble System`);
+        console.info(`${moduleTag} | Loaded Critcal Hit & Fumble System.`);
     }
 
     // Enable Proficiency Die
@@ -33,7 +33,7 @@ Hooks.once('setup', async function() {
         }
         else {diePatching();}
         
-        console.log(`${moduleTag} | Loaded Proficiency Die System`);
+        console.info(`${moduleTag} | Loaded Proficiency Die System.`);
     }
 
 
@@ -42,7 +42,11 @@ Hooks.once('setup', async function() {
 
 
 Hooks.once('ready', async function() {
-    heroPoints();
+    // Enable Hero Points
+    if (await game.settings.get(moduleName, 'use-hero-points')) {
+        heroPoints();
+        console.info(`${moduleTag} | Loaded Hero Points System.`);
+    }
     
     console.log(`${moduleTag} | Ready.`)
 });

@@ -3,6 +3,10 @@
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 import {moduleName, moduleTag} from "./constants.js";
 
+/**
+ * Hero Points
+ * @returns 
+ */
 export const heroPoints = async function() {
     // Fetch Actors
     let chars = game.actors?._source.filter(u => u.type == "character");
@@ -57,21 +61,61 @@ export const heroPoints = async function() {
     game.settings.set(moduleName, 'hero-points-lastSet', updatedAt);
     
     console.log(`${moduleTag} | HeroPoints initialized.`);
-    console.log(HeroPoints);
-    console.log(updatedAt);
+    console.info(HeroPoints);
+    console.info(updatedAt);
 
 
     // Set up display of data
-    await displayOnSheet(chars);
+    for (let index = 0; index < chars.length; index++) {    
+        await displayOnSheet(chars[index]);
+    }
+
 
     // Set up functions for triggers
+    Hooks.on("updateActor", async (...args) => {
+        var newHP;
+
+        // Check if it's the correct update
+        try {newHP = args[1].data.resources?.tertiary?.value;}
+        catch (error) {return;}
+        
+        if (newHP == undefined || newHP == null) {return;}
+
+        let stored = game.settings.get(moduleName, 'hero-points-data');
+
+        let actor = game.actors.get(args[1]._id);
+        let oldHP = stored[actor.data.name];
+
+        if (oldHP == null || oldHP == undefined) {return;}
+        if (newHP >= oldHP) {
+            setHpFlag(actor, newHP);
+            stored[actor.data.name] = newHP;
+            console.info(`${moduleTag} | Updated info`);
+            console.info(stored);
+        } else {
+            // Roll for how many points were used
+            let count = oldHP - newHP;            
+            await rollHeroPoint(count, actor);
+
+            setHpFlag(actor, newHP);
+            stored[actor.data.name] = newHP;
+            console.info(`${moduleTag} | Updated info`);
+            console.info(stored);
+        }
+                
+    });
 
 };
+
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //                                 Functions 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
+/**
+ * Calculate Hero Points
+ * @param actor 
+ * @returns 
+ */
 function calcHeroPoints(actor) {
     // Get class level
     let level = actor.data.data.details.level;
@@ -79,6 +123,11 @@ function calcHeroPoints(actor) {
 }
 
 
+/**
+ * Set HP Flag
+ * @param actor 
+ * @param hp 
+ */
 function setHpFlag(actor, hp) {
     try {
         actor.setFlag(moduleName, 'heroPoints', hp);
@@ -86,6 +135,11 @@ function setHpFlag(actor, hp) {
 }
 
 
+/**
+ * Get HP flag
+ * @param actor 
+ * @returns 
+ */
 function getHpFlag(actor) {
     try {
         return actor.getFlag(moduleName, 'heroPoints');
@@ -93,30 +147,41 @@ function getHpFlag(actor) {
 }
 
 
-async function displayOnSheet(chars) {
-    for (let index = 0; index < chars.length; index++) {    
-        // Get Char data
-        const currActor = game.actors.get(chars[index]._id);
+/**
+ * Display to Sheet on Ready
+ * @param char 
+ */
+async function displayOnSheet(char) {
+    // Get Char data
+    const currActor = game.actors.get(char._id);
         
-        // Set Tertiary value
-        const currHp = getHpFlag(currActor);
-        const totalHp = calcHeroPoints(currActor);
+    // Set Tertiary value
+    const currHp = getHpFlag(currActor);
+    const totalHp = calcHeroPoints(currActor);
 
-        const newValue = {
-            label: "Hero Points",
-            lr: false,
-            max: totalHp,
-            sr: false,
-            value: currHp
-        }
-
-        await currActor.update({"data.resources.tertiary": newValue});
-        console.warn("Updated");
-
+    const newValue = {
+        label: "Hero Points",
+        lr: false,
+        max: totalHp,
+        sr: false,
+        value: currHp
     }
+
+    await currActor.update({"data.resources.tertiary": newValue});
+    console.info(`${moduleTag} | Updated Sheet ${currActor.data.name}`);
 }
 
 
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//                                  Patching 
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/**
+ * Roll for Hero Points
+ * @param count 
+ * @param actor 
+ */
+async function rollHeroPoint(count, actor) {
+    let roll = await new Roll(`${count}d6`).evaluate();
+    roll.toMessage({
+        speaker: {alias: actor.data.name},
+        flavor: "Hero Points"
+    });
+}
+
