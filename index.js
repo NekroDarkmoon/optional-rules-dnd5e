@@ -4,6 +4,7 @@
 import {moduleName, moduleTag} from "./modules/constants.js";
 import {RegisterSettings} from "./modules/registerSettings.mjs";
 import {CritHitFumble} from "./modules/critical-hit-fumble.mjs";
+import {heroPoints} from "./modules/heroPoints.mjs";
 import { diePatching, diePatchingDAE } from "./modules/proficiencyDie.mjs";
 
 
@@ -19,7 +20,7 @@ Hooks.once('setup', async function() {
     // Enable Critical Hit Fumble Rules
     if (await game.settings.get(moduleName, 'use-crit-hit-fumble')) {
         CritHitFumble();
-        console.log(`${moduleTag} | Loaded Critcal Hit & Fumble System`);
+        console.info(`${moduleTag} | Loaded Critcal Hit & Fumble System.`);
     }
 
     // Enable Proficiency Die
@@ -32,12 +33,20 @@ Hooks.once('setup', async function() {
         }
         else {diePatching();}
         
-        console.log(`${moduleTag} | Loaded Proficiency Die System`);
+        console.info(`${moduleTag} | Loaded Proficiency Die System.`);
     }
+
 
     console.log(`${moduleTag} | Setting Up`)
 });
 
+
 Hooks.once('ready', async function() {
+    // Enable Hero Points
+    if (await game.settings.get(moduleName, 'use-hero-points')) {
+        heroPoints();
+        console.info(`${moduleTag} | Loaded Hero Points System.`);
+    }
+    
     console.log(`${moduleTag} | Ready.`)
 });
