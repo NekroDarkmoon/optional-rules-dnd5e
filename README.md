@@ -8,6 +8,7 @@ This module aims to automate some of the optional and homebrew rules avaialable 
 ## Supported Rules
 Below is a list of the current rules that the module automates.
 - Critical hit and Fumble Rules (DMG).
+- Hero Points (DMG).
 - ProficiencyDie (DMG).
 
 
