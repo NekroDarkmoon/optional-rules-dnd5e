@@ -25,6 +25,17 @@ https://github.com/NekroDarkmoon/optional-rules-dnd5e/releases/latest/download/m
 
 ## Changelog
 
+#### V0.1.0 Hero Points 
+- Added automation for the Hero points optional rule. 
+Hero Points should presist even on deleting an actor and recreating it, as long as the actor has the same name and the world isn't refreshed by the DM.
+
+[Warning] Hero Points consumes the teritary resource on char sheets so any existing data will be lost.
+
+Currently hero points are rolled when the value for the tertiary resource is changed.
+
+On level-up GM needs to refresh for hero points to update.
+
+
 #### V0.0.7
 - Added the option to set the threshold to trigger the critical-hit-fumble rolltables. Default value is 5, max is 6, and min is 1.
 
