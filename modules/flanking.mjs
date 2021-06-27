@@ -7,8 +7,17 @@
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 export function Flanking() {
     
-    Hooks.on('updateToken', async (...args) => {
-        console.log(args);
+    Hooks.on('targetToken', async (...args) => {
+        // 3 attributes, user, targeted token, targeted or not
+        // 2530
+
+        if (!args[2]) {return;}        
+        console.log(args);                
+
+        for(const selected of canvas.tokens.controlled){
+            console.log(selected);
+        }
+
         await checkNeighbours(args);
     });
     
@@ -18,28 +27,28 @@ export function Flanking() {
 //                                    Setting Up
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 async function checkNeighbours(args) {
-    let tokenData = await canvas.tokens.get(args[1]._id);
-    console.log(tokenData);
-    let position = tokenData._validPosition;
-    console.log(position);
 
-    let reach = tokenData.hitArea;
+    // Get valid location
+    let location = args[1]._validPosition;
+    console.log(location);
 
-    // Check hit area for enemies
-    let range = {
-        x: [position.x + reach.width, position.x - reach.width],
-        y: [position.y + reach.height, position.x + reach.height]
-    } 
+    // Get Grid size
+    let gridSize = canvas.grid.size;
 
-    let tokens = canvas.tokens.children[0].children;
-    console.log(tokens);
+    // Generate bounding box
+    let boundingBox = {
+        x1: location.x-gridSize,
+        x2: location.x+gridSize,
+        y1: location.y-gridSize,
+        y2: location.y+gridSize
+    };
+   
+    // Create Ray from attacker to target
+    // Project ray further from target to the other side
+    console.log(this);
 
-    let surrounding = [];
 
-    for (let index = 0; index < tokens.length; index++) {
-        const token = tokens[index];
-        
-    }
+    console.log(boundingBox);
 
 }
 
