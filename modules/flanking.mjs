@@ -32,19 +32,22 @@ export function Flanking() {
 async function isFlanking(user, origin, target) {
     
     // Check attacker disposition
+    const oDisposition = origin.data.disposition; 
 
     // Get target size
     let tSize = target.hitArea.width; 
 
     // Get origin and target location
-    const oLocation = origin._validPosition;
+    let oLocation = origin._validPosition;
+    oLocation.z = origin.data.elevation;
     let tLocation = target._validPosition;
-    console.log(oLocation);
-    console.log(tLocation);
+    tLocation.z = target.data.elevation;
+    // console.log(oLocation);
+    // console.log(tLocation);
 
     // Get Grid size and check if adjacent
     let gridSize = canvas.grid.size;
-    console.log(`Gridsize: ${gridSize}, tSize: ${tSize}`);
+    // console.log(`Gridsize: ${gridSize}, tSize: ${tSize}`);
     
 
     // Change target location based on creature size
@@ -52,7 +55,8 @@ async function isFlanking(user, origin, target) {
         // Calculate new targeted location
         tLocation = {
             x: (tLocation.x + (tSize - gridSize) + tLocation.x)/2,
-            y: (tLocation.y + (tSize - gridSize) + tLocation.y)/2
+            y: (tLocation.y + (tSize - gridSize) + tLocation.y)/2,
+            z: target.data.elevation,
         };
     }
 
@@ -63,7 +67,8 @@ async function isFlanking(user, origin, target) {
     // Check if friendly exists at location
     let tokens = canvas.tokens.children[0].children;
     for (const token of tokens) {
-        if (token._validPosition.x == requiredPosition.x && token._validPosition.y == requiredPosition.y) {
+        if (token._validPosition.x == requiredPosition.x && token._validPosition.y == requiredPosition.y &&
+            token.data.elevation == requiredPosition.z && token.data.disposition == oDisposition) {
             console.info(`Flanking with ${token.data.name}`);
         }
     }
@@ -86,7 +91,7 @@ class FlankingRay {
         this.origin = origin;
         this.target = target;
         
-        this.distance = this.clacdistance();
+        this.distance = this.clacDistance();
         console.log(`Distance: ${this.distance}`);
         this.normalized = this.normalized();
         console.log(`Normalized = ${this.normalized}`);
@@ -96,11 +101,11 @@ class FlankingRay {
      * 
      * @returns 
      */
-    clacdistance() {
-        const {x: x1, y: y1} = this.origin;
-        const {x: x2, y: y2} = this.target;
+    clacDistance() {
+        const {x: x1, y: y1, z: z1} = this.origin;
+        const {x: x2, y: y2, z: z2} = this.target;
 
-        return Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2-y1), 2)); 
+        return Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2-y1), 2) + Math.pow((z2-z1),2)); 
     }
 
     /**
@@ -108,11 +113,11 @@ class FlankingRay {
      * @returns 
      */
     normalized() {
-        const {x: x1, y: y1} = this.origin;
-        const {x: x2, y: y2} = this.target;
+        const {x: x1, y: y1, z: z1} = this.origin;
+        const {x: x2, y: y2, z: z2} = this.target;
 
-        const v = [(x1-x2), (y1-y2)];
-        return [(v[0]/this.distance), (v[1]/this.distance)];
+        const v = [(x1-x2), (y1-y2), (z1-z2)];
+        return [(v[0]/this.distance), (v[1]/this.distance), (v[2]/this.distance)];
     }
 
     /**
@@ -120,12 +125,13 @@ class FlankingRay {
      * @returns 
      */
     getFlankingPosititon() {
-        const {x: x1, y: y1} = this.target;
+        const {x: x1, y: y1, z: z1} = this.target;
         
         let x = x1 - (this.distance * this.normalized[0]);
         let y = y1 - (this.distance * this.normalized[1]);
+        let z = z1 - (this.distance * this.normalized[2]);
 
-        return {x: x, y: y};
+        return {x: x, y: y, z: z};
     }
 }
 
