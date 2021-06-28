@@ -8,15 +8,12 @@
 export function Flanking() {
     
     Hooks.on('targetToken', async (user, target, state) => {
-        // 3 attributes, user, targeted token, targeted or not
-        // 2530
-
+        // Return if state is not targetting.
         if (!state) {return;}        
-        // console.log(target);                
 
+        // Start checking for controlled/selected actors.
         for(const selected of canvas.tokens.controlled){
-            // console.log(selected);
-            await checkNeighbours(user, target, selected);
+            await isFlanking(user, target, selected);
         }
 
     });
@@ -26,42 +23,54 @@ export function Flanking() {
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //                                    Setting Up
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-async function checkNeighbours(user, target, origin) {
+async function isFlanking(user, target, origin) {
+    
+    // Get target size
+    let tSize = target.hitArea.width; 
+    // console.log(target);
 
-    // Get valid location
-    let location = target._validPosition;
-    console.log(location);
+    // Get origin and target location
+    const oLocation = origin._validPosition;
+    let tLocation = target._validPosition;
+    console.log(oLocation);
+    console.log(tLocation);
 
-    // Get Grid size
+    // Get Grid size and check if adjacent
     let gridSize = canvas.grid.size;
+    console.log(`Gridsize: ${gridSize}, tSize: ${tSize}`);
+    
 
-    // // Generate bounding box
-    // let boundingBox = {
-    //     x1: location.x-gridSize,
-    //     x2: location.x+gridSize,
-    //     y1: location.y-gridSize,
-    //     y2: location.y+gridSize
-    // };
-   
-    // Create Ray from attacker to target
+    // Change target location based on creature size
+    if (tSize > gridSize) {
+        // Calculate new targeted location
+        tLocation = {
+            x: (tLocation.x + (tSize - gridSize) + tLocation.x)/2,
+            y: (tLocation.y + (tSize - gridSize) + tLocation.y)/2
+        };
+        
+        console.log(tLocation);
+    }
 
-
-
-    let flanker = new FlankingRay(origin._validPosition, target._validPosition);    
+    // Create flanking ray and calculate relative location of flanker
+    let flanker = new FlankingRay(oLocation, tLocation);    
     let requiredPosition = flanker.getFlankingPosititon();
     console.log(requiredPosition);    
 
+    // Check if friendly exists at location
     let tokens = canvas.tokens.children[0].children;
     for (const token of tokens) {
         if (token._validPosition.x == requiredPosition.x && token._validPosition.y == requiredPosition.y) {
-            console.log(`Flanking with ${token.data.name}`);
+            console.info(`Flanking with ${token.data.name}`);
         }
     }
 
+    // Ready for garbage collection.
+    flanker = undefined;
 }
 
+
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//                                    Setting Up
+//                                    Class
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 class FlankingRay {
 
@@ -70,7 +79,9 @@ class FlankingRay {
         this.target = target;
         
         this.distance = this.clacdistance();
+        console.log(`Distance: ${this.distance}`);
         this.normalized = this.normalized();
+        console.log(`Normalized = ${this.normalized}`);
     }
 
 
