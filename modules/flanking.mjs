@@ -6,28 +6,35 @@
 //                                    Flanking
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 export function Flanking() {
-    
     Hooks.on('targetToken', async (user, target, state) => {
         // Return if state is not targetting.
         if (!state) {return;}        
 
         // Start checking for controlled/selected actors.
         for(const selected of canvas.tokens.controlled){
-            await isFlanking(user, target, selected);
+            await isFlanking(user, selected, target);
         }
-
     });
+
+
     
 }
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //                                    Setting Up
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-async function isFlanking(user, target, origin) {
+/**
+ * Check if a target is being flanked by another ally.
+ * @param user {Object} 
+ * @param origin {Object}
+ * @param target {Object}
+ */
+async function isFlanking(user, origin, target) {
     
+    // Check attacker disposition
+
     // Get target size
     let tSize = target.hitArea.width; 
-    // console.log(target);
 
     // Get origin and target location
     const oLocation = origin._validPosition;
@@ -47,14 +54,11 @@ async function isFlanking(user, target, origin) {
             x: (tLocation.x + (tSize - gridSize) + tLocation.x)/2,
             y: (tLocation.y + (tSize - gridSize) + tLocation.y)/2
         };
-        
-        console.log(tLocation);
     }
 
     // Create flanking ray and calculate relative location of flanker
     let flanker = new FlankingRay(oLocation, tLocation);    
     let requiredPosition = flanker.getFlankingPosititon();
-    console.log(requiredPosition);    
 
     // Check if friendly exists at location
     let tokens = canvas.tokens.children[0].children;
@@ -73,7 +77,11 @@ async function isFlanking(user, target, origin) {
 //                                    Class
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 class FlankingRay {
-
+    /**
+     * 
+     * @param origin {Object}
+     * @param target {Object}
+     */
     constructor(origin, target) {
         this.origin = origin;
         this.target = target;
@@ -84,7 +92,10 @@ class FlankingRay {
         console.log(`Normalized = ${this.normalized}`);
     }
 
-
+    /**
+     * 
+     * @returns 
+     */
     clacdistance() {
         const {x: x1, y: y1} = this.origin;
         const {x: x2, y: y2} = this.target;
@@ -92,7 +103,10 @@ class FlankingRay {
         return Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2-y1), 2)); 
     }
 
-
+    /**
+     * 
+     * @returns 
+     */
     normalized() {
         const {x: x1, y: y1} = this.origin;
         const {x: x2, y: y2} = this.target;
@@ -101,7 +115,10 @@ class FlankingRay {
         return [(v[0]/this.distance), (v[1]/this.distance)];
     }
 
-
+    /**
+     * 
+     * @returns 
+     */
     getFlankingPosititon() {
         const {x: x1, y: y1} = this.target;
         
