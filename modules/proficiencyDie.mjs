@@ -3,7 +3,7 @@
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 import { moduleName, moduleTag} from "./constants.js";
 import { libWrapper } from "./lib/shim.js";
-import { d20Roll } from "../../../../systems/dnd5e/module/dice.js";
+// import { d20Roll } from "../../../../systems/dnd5e/module/dice.js";
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //                                 Wrapped Functions
@@ -101,7 +101,7 @@ function rollAbilitySave(wrapper, ...args) {
   });
 
   // return wrapper(...args);
-  return d20Roll(rollData);
+  return game.dnd5e.dice.d20Roll(rollData);
 }
 
 /**
@@ -153,7 +153,7 @@ function rollAbilitySaveDAE(wrapper, ...args) {
   });
 
   return wrapper(...args);
-  // return d20Roll(rollData);
+  // return game.dnd5e.dice.d20Roll(rollData);
 }
 
 
@@ -212,7 +212,7 @@ function rollSkill(wrapper, ...args) {
     }
   });
 
-  return d20Roll(rollData);
+  return game.dnd5e.dice.d20Roll(rollData);
 }
 
 
