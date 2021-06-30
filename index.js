@@ -6,6 +6,7 @@ import {RegisterSettings} from "./modules/registerSettings.mjs";
 import {CritHitFumble} from "./modules/critical-hit-fumble.mjs";
 import {heroPoints} from "./modules/heroPoints.mjs";
 import { diePatching, diePatchingDAE } from "./modules/proficiencyDie.mjs";
+import { Flanking } from "./modules/flanking.mjs";
 
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -34,6 +35,19 @@ Hooks.once('setup', async function() {
         else {diePatching();}
         
         console.info(`${moduleTag} | Loaded Proficiency Die System.`);
+    }
+
+    // Enable Flanking
+    if (await game.settings.get(moduleName, 'use-flanking')) {
+        // Get cross module Compatibility
+        let midi = game.modules.get('midi-qol');
+        if (midi?.active) {
+            await Flanking(true);
+        } else {
+            await Flanking();    
+        }
+        
+        console.info(`${moduleTag} | Loaded Flanking System.`);
     }
 
 

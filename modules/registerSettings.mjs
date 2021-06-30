@@ -38,6 +38,15 @@ export const RegisterSettings = async function() {
         onChange: tableExists
     });
     
+    // Settings for Flanking
+    await game.settings.register(moduleName, 'use-flanking', {
+        name: "Use Flanking",
+        scope: 'world',
+        config: true,
+        type: Boolean,
+        onChange: debounceReload
+    });
+
     // Settings for Hero Points
     await game.settings.register(moduleName, 'use-hero-points', {
         name: "Use Hero Points",
