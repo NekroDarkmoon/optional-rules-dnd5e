@@ -73,15 +73,31 @@ async function isFlanking(user, origin, target) {
     // Check if friendly exists at location
     let tokens = canvas.tokens.children[0].children;
     for (const token of tokens) {
+        console.info(`${moduleTag} | Distance: ${flanker.distance}; Normalized: ${flanker.normalized}; ReqPos: ${JSON.stringify(requiredPosition)}.`);
+        
         if (token._validPosition.x == requiredPosition.x && token._validPosition.y == requiredPosition.y &&
             token.data.elevation == requiredPosition.z && token.data.disposition == oDisposition) {
-            // if (token.data.document.data.effects._source)
+           
+            // Check if Unconcious 
+            const actor = game.actors.get(token.data.actorId);
+            let effects = actor.data.effects?._source;
+            if (effects !== undefined && effects !== null) {
+                for (let index = 0; index < effects.length; index++) {
+                    const effect = effects[index];
+                    if (effect.label == "Unconscious") {
+                        console.info(`${moduleTag} | ${token.data.name} is Unconscious.`);
+                        return false;
+                    }
+                }
+            }
+
             console.info(`${moduleTag} | Flanking with ${token.data.name}.`);
-            console.info(`${moduleTag} | Distance: ${flanker.distance}; Normalized: ${flanker.normalized}; ReqPos: ${JSON.stringify(requiredPosition)}.`);
+            
             await ChatMessage.create({
                 speaker: {alias: "Optional Rules"},
                 content: `${origin.data.name} & ${token.data.name} are flanking ${target.data.name}`
             });
+            
             return true;
         }
     }
