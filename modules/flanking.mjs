@@ -1,23 +1,29 @@
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //                                     Imports
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+import { moduleName, moduleTag } from "./constants.js";
+import { libWrapper } from "./lib/shim.js";
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //                                    Flanking
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-export function Flanking() {
+export async function Flanking() {
     Hooks.on('targetToken', async (user, target, state) => {
         // Return if state is not targetting.
         if (!state) {return;}        
 
         // Start checking for controlled/selected actors.
         for(const selected of canvas.tokens.controlled){
-            await isFlanking(user, selected, target);
+            if (await isFlanking(user, selected, target)){
+                return;
+            }
         }
+
     });
 
+    // Run a patch for attack roll
+    // libWrapper.register(moduleName, "CONFIG.Item.documentClass.prototype.rollAttack", attackRoll, "WRAPPER");
 
-    
 }
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -69,12 +75,20 @@ async function isFlanking(user, origin, target) {
     for (const token of tokens) {
         if (token._validPosition.x == requiredPosition.x && token._validPosition.y == requiredPosition.y &&
             token.data.elevation == requiredPosition.z && token.data.disposition == oDisposition) {
-            console.info(`Flanking with ${token.data.name}`);
+            // if (token.data.document.data.effects._source)
+            console.info(`${moduleTag} | Flanking with ${token.data.name}.`);
+            console.info(`${moduleTag} | Distance: ${flanker.distance}; Normalized: ${flanker.normalized}; ReqPos: ${JSON.stringify(requiredPosition)}.`);
+            await ChatMessage.create({
+                speaker: {alias: "Optional Rules"},
+                content: `${origin.data.name} & ${token.data.name} are flanking ${target.data.name}`
+            });
+            return true;
         }
     }
 
     // Ready for garbage collection.
     flanker = undefined;
+    return false;
 }
 
 
@@ -92,9 +106,7 @@ class FlankingRay {
         this.target = target;
         
         this.distance = this.clacDistance();
-        console.log(`Distance: ${this.distance}`);
         this.normalized = this.normalized();
-        console.log(`Normalized = ${this.normalized}`);
     }
 
     /**
@@ -146,5 +158,12 @@ class FlankingRay {
 
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//                                    Setting Up
+//                                    Patching
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+async function attackRoll(wrapped, options) {
+
+    options.advantage = true;
+
+    let result = await wrapped(options);
+    return result;
+} 

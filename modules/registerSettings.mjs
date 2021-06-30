@@ -39,16 +39,8 @@ export const RegisterSettings = async function() {
     });
     
     // Settings for Flanking
-    await game.settings.register(moduleName, 'flanking-var1', {
-        name: "Flanking Rules Variant 1",
-        scope: 'world',
-        config: true,
-        type: Boolean,
-        onChange: debounceReload
-    });
-
-    await game.settings.register(moduleName, 'flanking-var2', {
-        name: "Flanking Rules Variant 2",
+    await game.settings.register(moduleName, 'use-flanking', {
+        name: "Use Flanking",
         scope: 'world',
         config: true,
         type: Boolean,

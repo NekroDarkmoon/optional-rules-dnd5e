@@ -37,8 +37,12 @@ Hooks.once('setup', async function() {
         console.info(`${moduleTag} | Loaded Proficiency Die System.`);
     }
 
+    // Enable Flanking
+    if (await game.settings.get(moduleName, 'use-flanking')) {
+        await Flanking();
+        console.info(`${moduleTag} | Loaded Flanking System.`);
+    }
 
-    Flanking();
 
     console.log(`${moduleTag} | Setting Up`)
 });
