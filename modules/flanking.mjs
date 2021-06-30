@@ -7,7 +7,12 @@ import { libWrapper } from "./lib/shim.js";
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //                                    Flanking
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-export async function Flanking() {
+/**
+ * 
+ * @param midi {boolean}
+ */
+export async function Flanking(midi = false) {
+
     Hooks.on('targetToken', async (user, target, state) => {
         // Return if state is not targetting.
         if (!state) {return;}        
@@ -15,15 +20,39 @@ export async function Flanking() {
         // Start checking for controlled/selected actors.
         for(const selected of canvas.tokens.controlled){
             if (await isFlanking(user, selected, target)){
+                let actor = game.actors.get(selected.data.actorId);
+                await actor.setFlag(moduleName, "flanking", true);
+                
+                // Use midi for advantage automation
+                if (midi) {
+                    await actor.setFlag("midi-qol", "advantage.attack.all", true);
+                }
+
                 return;
             }
         }
 
     });
 
-    // Run a patch for attack roll
-    // libWrapper.register(moduleName, "CONFIG.Item.documentClass.prototype.rollAttack", attackRoll, "WRAPPER");
+    Hooks.on('updateToken', async (...args) => {
+        let actor = game.actors.get(args[0].data.actorId);
 
+        if (await actor.getFlag(moduleName, "flanking")){
+            await actor.setFlag(moduleName, "flanking", false);
+
+            if (midi) {
+                if (await actor.getFlag("midi-qol", "advantage.attack.all")) {
+                    await actor.setFlag("midi-qol", "advantage.attack.all", false);
+                }
+            }
+        }
+
+    });
+
+    // Run a patch for attack roll if midi is not found
+    if (!midi) {
+        libWrapper.register(moduleName, "CONFIG.Item.documentClass.prototype.rollAttack", attackRoll, "WRAPPER");
+    }
 }
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -164,22 +193,31 @@ class FlankingRay {
 }
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//                                    Setting Up
+//                                    Hold
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//                                    Setting Up
+//                                    Hold
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //                                    Patching
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/**
+ * 
+ * @param wrapped {wrapped}
+ * @param options {Object}
+ * @returns 
+ */
 async function attackRoll(wrapped, options) {
 
-    options.advantage = true;
+    if (this.parent.data.flags[moduleName] !== undefined 
+        && this.parent.data.flags[moduleName].flanking) { 
+        options.advantage = true;
+        options.fastForward = true;
+    }
 
-    let result = await wrapped(options);
-    return result;
+    return await wrapped(options);
 } 
