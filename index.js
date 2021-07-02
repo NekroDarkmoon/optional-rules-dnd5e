@@ -40,13 +40,16 @@ Hooks.once('setup', async function() {
     // Enable Flanking
     if (await game.settings.get(moduleName, 'use-flanking')) {
         // Get cross module Compatibility
-        let midi = game.modules.get('midi-qol');
-        if (midi?.active) {
-            await Flanking(true);
-        } else {
-            await Flanking();    
-        }
+        let settings = {
+            midi: ((game.modules.get('midi-qol'))?.active) ? true : false,
+            adv: (await game.settings.get(moduleName, 'use-flanking-mod')) ? false : true,
+            mod: await game.settings.get(moduleName, 'flanking-mod')
+        };
         
+        console.log(settings);
+
+        await Flanking(settings);
+
         console.info(`${moduleTag} | Loaded Flanking System.`);
     }
 
