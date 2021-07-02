@@ -1,5 +1,8 @@
 # Changelog
 
+### V0.2.2 - Flanking
+- Added support for modifiers instead of advantage.
+
 ### V0.2.0 - Flanking
 - Added automation for the official Flanking rules found in the dmg.
 
