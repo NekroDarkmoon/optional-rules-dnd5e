@@ -237,6 +237,7 @@ async function attackRoll(wrapped, options) {
 function getAttackToHit(wrapped) {
     let original = wrapped();
     
+    if (this == null || this == undefined) {return wrapped();}
     if (original == undefined || original == null) {return wrapped();}
     
     if (this.parent.data.flags[moduleName] !== undefined &&
