@@ -47,6 +47,24 @@ export const RegisterSettings = async function() {
         onChange: debounceReload
     });
 
+    await game.settings.register(moduleName, 'use-flanking-mod', {
+        name: "Use Modifiers instead of Adv/Dis for flanking",
+        scope: 'world',
+        config: true,
+        type: Boolean,
+        default: false,
+        onChange: debounceReload
+    });
+
+    await game.settings.register(moduleName, 'flanking-mod', {
+        name: "Modifier to use when flanking",
+        scope: 'world',
+        config: true,
+        type: Number,
+        default: 0,
+        onChange: debounceReload
+    });
+
     // Settings for Hero Points
     await game.settings.register(moduleName, 'use-hero-points', {
         name: "Use Hero Points",

@@ -4,6 +4,8 @@
 import { moduleName, moduleTag } from "./constants.js";
 import { libWrapper } from "./lib/shim.js";
 
+var flankingSettings;
+
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //                                    Flanking
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -11,7 +13,9 @@ import { libWrapper } from "./lib/shim.js";
  * 
  * @param midi {boolean}
  */
-export async function Flanking(midi = false) {
+export async function Flanking(settings) {
+
+    flankingSettings = settings;
 
     Hooks.on('targetToken', async (user, target, state) => {
         // Return if state is not targetting.
@@ -24,7 +28,7 @@ export async function Flanking(midi = false) {
                 await actor.setFlag(moduleName, "flanking", true);
                 
                 // Use midi for advantage automation
-                if (midi) {
+                if (settings.midi && settings.adv) {
                     await actor.setFlag("midi-qol", "advantage.attack.all", true);
                 }
 
@@ -34,13 +38,14 @@ export async function Flanking(midi = false) {
 
     });
 
+    // Remove flanking on move
     Hooks.on('updateToken', async (...args) => {
         let actor = game.actors.get(args[0].data.actorId);
 
         if (await actor.getFlag(moduleName, "flanking")){
             await actor.setFlag(moduleName, "flanking", false);
 
-            if (midi) {
+            if (settings.midi && settings.adv) {
                 if (await actor.getFlag("midi-qol", "advantage.attack.all")) {
                     await actor.setFlag("midi-qol", "advantage.attack.all", false);
                 }
@@ -50,9 +55,15 @@ export async function Flanking(midi = false) {
     });
 
     // Run a patch for attack roll if midi is not found
-    if (!midi) {
+    if (!settings.midi && settings.adv) {
         libWrapper.register(moduleName, "CONFIG.Item.documentClass.prototype.rollAttack", attackRoll, "WRAPPER");
+        console.log(`${moduleTag} | Rolling with adv`);
     }
+
+    if (!settings.adv) {
+        libWrapper.register(moduleName, "CONFIG.Item.documentClass.prototype.getAttackToHit", getAttackToHit, "OVERRIDE", {chain: true});
+    }
+
 }
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -221,3 +232,17 @@ async function attackRoll(wrapped, options) {
 
     return await wrapped(options);
 } 
+
+
+function getAttackToHit(wrapped) {
+    let original = wrapped();
+    
+    if (original == undefined || original == null) {return wrapped();}
+    
+    if (this.parent.data.flags[moduleName] !== undefined &&
+        this.parent.data.flags[moduleName].flanking) {
+            original.parts.push(flankingSettings.mod);
+        }
+
+    return original;
+}
