@@ -7,6 +7,9 @@ import { moduleName, moduleTag } from "./constants.js";
 //                                      Menu
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 class ORDnD5e extends FormApplication{
+    /**
+     * 
+     */
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
             title: "Optional Rules 5e Settings",
@@ -16,7 +19,7 @@ class ORDnD5e extends FormApplication{
             height: "auto",
             closeOnSubmit: true,
             resizeable: true,
-            // tabs: [{navSelector: ".tabs", contentSelector: "form", inital: "critHitFumble"}]
+            tabs: [{navSelector: ".tabs", contentSelector: "form", inital: "critHitFumble"}]
         });
     }
 
@@ -25,31 +28,257 @@ class ORDnD5e extends FormApplication{
      * @param {*} options 
      */
     getData(options = {}) {
-    
+        const data = {
+            settings: {
+                // Settings for Critical Hit and Fumble Rules
+                critHitFumble: {
+                    useCritHitFumble: {
+                        name: "Critical Hit and Fumble Rules",
+                        hint: "Use the critical hit and fumble rules found in the DMG.",
+                        id: "use-crit-hit-fumble",
+                        value: game.settings.get(moduleName, "use-crit-hit-fumble"),
+                        isCheckbox: true,
+                        client: game.user.isGM                        
+                    },
+
+                    critHitThreshold: {
+                        name: "Critical Fumble Threshold",
+                        hint: "Change the triggering threshold for the rolltable roll. (Default is set to 5).",
+                        id: "crit-fumble-threshold",
+                        value: game.settings.get(moduleName, "crit-fumble-threshold"),
+                        isRange: true,
+                        range: {min: 1, max: 6},
+                        client: game.user.isGM
+                    },
+
+                    critHitRolltable: {
+                        name: "Critical Hit Rolltable",
+                        hint: "Rolltable for Critical Hit",
+                        id: "crit-hit-rolltable",
+                        value: game.settings.get(moduleName, "crit-hit-rolltable"),
+                        client: game.user.isGM
+                    },
+
+                    critFumbleRolltable: {
+                        name: "Critical Fumble Rolltable",
+                        hint: "Rolltable for Critical Fumble",
+                        id: "crit-fumble-rolltable",
+                        value: game.settings.get(moduleName, "crit-fumble-rolltable"),
+                        client: game.user.isGM
+                    },
+                },
+
+                // Settings for Flanking
+                flanking: {
+                    useFlanking: {
+                        name: "Enable Flanking Automation",
+                        hint: "Enable Automation for the optional flanking rules found in the DMG.",
+                        id: "use-flanking",
+                        value: game.settings.get(moduleName, "use-flanking"),
+                        isCheckbox: true,
+                        client: game.user.isGM
+                    },
+
+                    useFlankingMod: {
+                        name: "Variant Rule- Use Modifiers",
+                        hint: "Use modifiers instead of giving advantage when flanking.",
+                        id: "use-flanking-mod",
+                        value: game.settings.get(moduleName, "use-flanking-mod"),
+                        isCheckbox: true,
+                        client: game.user.isGM
+                    },
+
+                    flankingMod: {
+                        name: "Flanking Modifier",
+                        hint: "Modifier to use when using the Variant Rule - Use Modifiers. Default is set to 2",
+                        id: "flanking-mod",
+                        value: game.settings.get(moduleName, "flanking-mod"),
+                        isNumber: true,
+                        client: game.user.isGM
+                    }
+
+                },
+
+                // Settings for Hero Points
+                heroPoints: {
+                    useHeroPoints: {
+                        name: "Enable Hero Points Automation",
+                        hint: "Enable Automation for tracking and rolling hero points based on the optional rules from the DMG.",
+                        id: "use-hero-points",
+                        value: game.settings.get(moduleName, "use-hero-points"),
+                        isCheckbox: true,
+                        client: game.user.isGM
+                    },
+
+                },
+
+                // Settigns for Proficiency Die
+                profDie: {
+                    useProfDie: {
+                        name: "Enable Proficiency Die Automation",
+                        hint: "Enable Automation for using the optional proficiency die rules found in the DMG.",
+                        id: "use-prof-die",
+                        value: game.settings.get(moduleName, 'use-prof-die'),
+                        isCheckbox: true,
+                        client: game.user.isGM
+                    },
+                },
+            }
+        }
+
+        data.isGM = game.user.isGM;
+        return data;
     }
 
+    /**
+     * 
+     * @param {*} html 
+     */
     activeListeners(html){
         super.activeListeners(html);
     }
 
+    /**
+     * 
+     * @param {*} event 
+     * @param {*} formData 
+     */
     async _updateObject(event, formData) {
         console.log(formData);
-    }
+        for (let [key, value] of Object.entries(formData)){
+            await game.settings.set(moduleName, key, value);
+        }
 
-    async _updateObject(event, fromData) {
         this.render();
     }
+
 
 }
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //                                 Helper Functions
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/**
+ * 
+ * @param tableName 
+ */
+const tableExists = function (tableName) {
+    let rollTable = game.tables.getName(tableName);
+    if (rollTable == undefined) {
+        ui.notifications.error(`${moduleTag} | RollTable named ${tableName} not found.`)
+    }
+};
+
+/**
+ * 
+ */
+const debounceReload = debounce(() => window.location.reload(), 100);
+
+
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //                                    Settings
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-export const RegisterSettings2 = async function() {
+export const RegisterSettings = async function() {
+ 
+    // Settings for critical hit and fumble tables
+    await game.settings.register(moduleName, 'use-crit-hit-fumble', {
+        name: "Use Critical hit and fumble rules",
+        scope: 'world',
+        config: false,
+        type: Boolean,
+        default: false,
+        onChange: debounceReload
+    });
+
+    await game.settings.register(moduleName, 'crit-fumble-threshold', {
+        name: "Set Critical Fumble Threshold",
+        hint: "Change the triggering threshold for the rolltable roll.",
+        scope: 'world',
+        config: false,
+        type: Number,
+        default: 5,
+        onChange: debounceReload
+    });
+
+    await game.settings.register(moduleName, 'crit-hit-rolltable', {
+        name: "Critical hit rolltable",
+        scope: 'world',
+        config: false,
+        type: String,
+        onChange: tableExists
+    });
+
+    await game.settings.register(moduleName, 'crit-fumble-rolltable', {
+        name: "Critical fumble rolltable",
+        scope: 'world',
+        config: false,
+        type: String,
+        onChange: tableExists
+    });
+    
+    // Settings for Flanking
+    await game.settings.register(moduleName, 'use-flanking', {
+        name: "Use Flanking",
+        scope: 'world',
+        config: false,
+        type: Boolean,
+        onChange: debounceReload
+    });
+
+    await game.settings.register(moduleName, 'use-flanking-mod', {
+        name: "Use Modifiers instead of Adv/Dis for flanking",
+        scope: 'world',
+        config: false,
+        type: Boolean,
+        default: false,
+        onChange: debounceReload
+    });
+
+    await game.settings.register(moduleName, 'flanking-mod', {
+        name: "Modifier to use when flanking",
+        scope: 'world',
+        config: false,
+        type: Number,
+        default: 2,
+        onChange: debounceReload
+    });
+
+    // Settings for Hero Points
+    await game.settings.register(moduleName, 'use-hero-points', {
+        name: "Use Hero Points",
+        scope: 'world',
+        config: false,
+        type: Boolean,
+        onChange: debounceReload
+    });
+
+    await game.settings.register(moduleName, 'hero-points-data', {
+        name: "Hero Points Data",
+        scope: 'world',
+        config: false,
+        type: Object,
+        default: null
+    });
+
+    await game.settings.register(moduleName, 'hero-points-lastSet', {
+        name: "Hero Points Last Set",
+        scope: 'world',
+        config: false,
+        type: Object,
+        default: null
+    });
+
+    
+    // Settings for proficiency die 
+    await game.settings.register(moduleName, 'use-prof-die', {
+        name: "Use Proficiency die rules",
+        scope: 'world',
+        config: false,
+        type: Boolean,
+        onChange: debounceReload
+    });
+  
     game.settings.registerMenu(moduleName, "SettingsMenu", {
         name: "Settings Menu",
         label: "Configure Settings",

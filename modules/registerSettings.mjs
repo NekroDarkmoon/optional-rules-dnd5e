@@ -1,3 +1,4 @@
+//  DEPRECATION WARNING
 import { moduleName, moduleTag} from "./constants.js";
 
 export const RegisterSettings = async function() {
@@ -61,7 +62,7 @@ export const RegisterSettings = async function() {
         scope: 'world',
         config: true,
         type: Number,
-        default: 0,
+        default: 2,
         onChange: debounceReload
     });
 

@@ -2,8 +2,8 @@
 //                                    Imports 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 import {moduleName, moduleTag} from "./modules/constants.js";
-import {RegisterSettings} from "./modules/registerSettings.mjs";
-import {RegisterSettings2} from "./modules/settings.js";
+// import {RegisterSettings} from "./modules/registerSettings.mjs";
+import {RegisterSettings} from "./modules/settings.js";
 import {CritHitFumble} from "./modules/critical-hit-fumble.mjs";
 import {heroPoints} from "./modules/heroPoints.mjs";
 import { diePatching, diePatchingDAE } from "./modules/proficiencyDie.mjs";
@@ -15,8 +15,8 @@ import { Flanking } from "./modules/flanking.mjs";
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 Hooks.once('init', async function() {
     console.log(`${moduleTag} | Initializing `);
+    // RegisterSettings();
     RegisterSettings();
-    RegisterSettings2();
 });
 
 Hooks.once('setup', async function() {
