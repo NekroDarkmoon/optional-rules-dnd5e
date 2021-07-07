@@ -5,7 +5,7 @@
 - Flanking now only applies to melee weapon attacks.
 - Flanking is no longer checked for creatures of the same disposition.
 - Flanking now checks for adjacency.
-- Flanking condition will now be removed when player untargets a creature that is being flanked.
+- Flanking condition will now be removed when the player un-targets a creature that is being flanked.
 
 **Setting Changes**
 - Revamped settings into a tidier menu with tabs for each rule.
