@@ -1,5 +1,18 @@
 # Changelog
 
+### V0.2.4 - Flanking
+**Flanking Changes**
+- Flanking now only applies to melee weapon attacks.
+- Flanking is no longer checked for creatures of the same disposition.
+- Flanking now checks for adjacency.
+- Flanking condition will now be removed when player untargets a creature that is being flanked.
+
+**Setting Changes**
+- Revamped settings into a tidier menu with tabs for each rule.
+- Added hints to all settings for a better explanation of each setting.
+- Added better checks for out of bounds settings.
+
+
 ### V0.2.2 - Flanking
 - Added support for modifiers instead of advantage.
 
