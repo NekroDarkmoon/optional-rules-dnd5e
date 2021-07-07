@@ -18,8 +18,20 @@ export async function Flanking(settings) {
     flankingSettings = settings;
 
     Hooks.on('targetToken', async (user, target, state) => {
-        // Return if state is not targetting.
-        if (!state) {return;}        
+        // Remove flanking if state is not targetting.
+        if (!state) {
+            for (const selected of canvas.tokens.controlled){
+                let actor = game.actors.get(selected.data.actorId);
+                if (actor.getFlag(moduleName, "flanking")) {
+                    await actor.setFlag(moduleName, "flanking", false);
+                    if (settings.midi && settings.adv) {
+                        await actor.setFlag("midi-qol", "advantage.attack.mwak", false);
+                    }
+                    console.log(`${moduleTag} | Flanking condition Removed.`);
+                }
+            }
+            return;
+        }        
 
         // Start checking for controlled/selected actors.
         for(const selected of canvas.tokens.controlled){
@@ -29,7 +41,7 @@ export async function Flanking(settings) {
                 
                 // Use midi for advantage automation
                 if (settings.midi && settings.adv) {
-                    await actor.setFlag("midi-qol", "advantage.attack.all", true);
+                    await actor.setFlag("midi-qol", "advantage.attack.mwak", true);
                 }
 
                 return;
@@ -46,8 +58,8 @@ export async function Flanking(settings) {
             await actor.setFlag(moduleName, "flanking", false);
 
             if (settings.midi && settings.adv) {
-                if (await actor.getFlag("midi-qol", "advantage.attack.all")) {
-                    await actor.setFlag("midi-qol", "advantage.attack.all", false);
+                if (await actor.getFlag("midi-qol", "advantage.attack.mwak")) {
+                    await actor.setFlag("midi-qol", "advantage.attack.mwak", false);
                 }
             }
         }
@@ -74,11 +86,14 @@ export async function Flanking(settings) {
  * @param user {Object} 
  * @param origin {Object}
  * @param target {Object}
+ * @returns
  */
 async function isFlanking(user, origin, target) {
     
-    // Check attacker disposition
-    const oDisposition = origin.data.disposition; 
+    // Check attacker disposition against target disposition
+    const oDisposition = origin.data.disposition;
+    const tDisposition = target.data.disposition;
+    if (oDisposition === tDisposition) {return;}
 
     // Get target size
     let tSize = target.hitArea.width; 
@@ -94,8 +109,12 @@ async function isFlanking(user, origin, target) {
     // Get Grid size and check if adjacent
     let gridSize = canvas.grid.size;
     // console.log(`Gridsize: ${gridSize}, tSize: ${tSize}`);
+    let height = target.data.height;
+    if (Math.abs(oLocation.x - tLocation.x) > height*gridSize || 
+        Math.abs(oLocation.y - tLocation.y) > height*gridSize) {
+            return false;
+    }
     
-
     // Change target location based on creature size
     if (tSize > gridSize) {
         // Calculate new targeted location
@@ -225,7 +244,8 @@ class FlankingRay {
 async function attackRoll(wrapped, options) {
 
     if (this.parent.data.flags[moduleName] !== undefined 
-        && this.parent.data.flags[moduleName].flanking) { 
+        && this.parent.data.flags[moduleName].flanking &&
+        this?.data?.data?.actionType == "mwak") { 
         options.advantage = true;
         options.fastForward = true;
     }
@@ -239,9 +259,11 @@ function getAttackToHit(wrapped) {
     
     if (this == null || this == undefined) {return wrapped();}
     if (original == undefined || original == null) {return wrapped();}
-    
-    if (this.parent.data.flags[moduleName] !== undefined &&
-        this.parent.data.flags[moduleName].flanking) {
+
+    if (this?.parent?.data?.flags[moduleName] !== undefined &&
+        this?.parent?.data?.flags[moduleName] !== null &&
+        this?.parent?.data?.flags[moduleName]?.flanking &&
+        this?.parent?.data?.data?.actionType == "mwak") {
             original.parts.push(flankingSettings.mod);
         }
 
