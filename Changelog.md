@@ -1,5 +1,9 @@
 # Changelog
 
+### v0.2.6 - Flanking
+- Fixed bug where setting creature size to None would disable flanking.
+- Fixed bug where modifiers for flanking wouldn't apply. 
+
 ### V0.2.5 - Flanking
 **Critial Hit Changes**
 - Fixed a minor bug with Critical Hit and Fumble automation.
