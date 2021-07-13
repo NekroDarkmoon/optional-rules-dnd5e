@@ -7,7 +7,6 @@ import {moduleName, moduleTag} from "./constants.js";
  * 
  */
 export var CritHitFumble = async function(){
-
     Hooks.on('midi-qol.AttackRollComplete', async (midiData) => {
         //  Check if critcal
         if (midiData.isCritical) {

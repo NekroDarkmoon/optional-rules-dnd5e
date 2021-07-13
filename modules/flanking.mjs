@@ -74,6 +74,7 @@ export async function Flanking(settings) {
 
     if (!settings.adv) {
         libWrapper.register(moduleName, "CONFIG.Item.documentClass.prototype.getAttackToHit", getAttackToHit, "OVERRIDE", {chain: true});
+        console.log(`${moduleTag} | Patching for flanking modifier.`)
     }
 
 }
@@ -93,8 +94,12 @@ async function isFlanking(user, origin, target) {
     // Check attacker disposition against target disposition
     const oDisposition = origin.data.disposition;
     const tDisposition = target.data.disposition;
-    if (oDisposition === tDisposition) {return;}
+    if (oDisposition === tDisposition) {return false;}
 
+    // Check Target size
+    if (flankingSettings?.size <= target.data.height){
+        return false;}
+   
     // Get target size
     let tSize = target.hitArea.width; 
 
