@@ -179,8 +179,11 @@ const tableExists = function (tableName) {
 };
 
 const flankCreatureMap = async function (choice) {
-    var size = -1;
+    var size = 0;
     switch (choice) {
+        case "None":
+            size = 4;
+            break;
         case "Tiny":
             size = 1;
             break;

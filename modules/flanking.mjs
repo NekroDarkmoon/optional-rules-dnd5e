@@ -97,8 +97,7 @@ async function isFlanking(user, origin, target) {
     if (oDisposition === tDisposition) {return false;}
 
     // Check Target size
-    if (flankingSettings?.size <= target.data.height){
-        return false;}
+    if (target.data.height >= flankingSettings?.size){return false;}
    
     // Get target size
     let tSize = target.hitArea.width; 
@@ -268,8 +267,9 @@ function getAttackToHit(wrapped) {
     if (this?.parent?.data?.flags[moduleName] !== undefined &&
         this?.parent?.data?.flags[moduleName] !== null &&
         this?.parent?.data?.flags[moduleName]?.flanking &&
-        this?.parent?.data?.data?.actionType == "mwak") {
+        this?.data?.data?.actionType == "mwak") {
             original.parts.push(flankingSettings.mod);
+            console.log("Added modifier");
         }
 
     return original;
