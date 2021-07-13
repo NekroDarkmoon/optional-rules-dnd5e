@@ -98,7 +98,7 @@ class ORDnD5e extends FormApplication{
                     },
 
                     creatureSize: {
-                        name: "Flank Based on creature Choice",
+                        name: "Flank Based on creature size",
                         hint: "Restrict flanking to a creature size and below.",
                         id: 'creatureSize',
                         value: game.settings.get(moduleName, "creatureSize"),
