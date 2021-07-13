@@ -33,10 +33,10 @@ Hooks.once('setup', async function() {
         }
         
         // let customDie = game.settings.get(moduleName, customDie);
-        let customDie = {1: "2d2", 5:"2d3", 9:"2d4", 13:"2d5", 17:"2d6"};
-        if (customDie != null){
-            foundry.utils.mergeObject(profDie, customDie);
-        }
+        // let customDie = {1: "2d2", 5:"2d3", 9:"2d4", 13:"2d5", 17:"2d6"};
+        // if (customDie != null){
+        //     foundry.utils.mergeObject(profDie, customDie);
+        // }
         
         if (dae?.active) {
             diePatchingDAE(profDie);
