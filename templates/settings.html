@@ -9,6 +9,15 @@
                 <input type="range" name="{{this.id}}" data-dtype="Number" value="{{this.value}}" min="{{ this.range.min }}" max="{{ this.range.max }}" step="{{this.range.step}}" />
                 <span class="range-value">{{this.value}}</span>
             
+            {{else if this.isChoice}}
+                <select name={{this.id}}>
+                    {{#select this.value}}
+                        {{#each this.choices as |name k|}}
+                            <option value="{{name}}"> {{name}} </option>
+                        {{/each}}
+                    {{/select}}
+                </select>
+
             {{else if this.isNumber}}
                 <input type="number" name="{{this.id}}" data-dtype="{{this.type}}" value="{{this.value}}" />
 
@@ -25,9 +34,9 @@
     <!-- Tabs -->
     <nav class="sheet-tabs tabs" data-group="sections">
         <a class="item active" data-tab="critHitFumble"><i class="fas fa-dice-d20"></i> Critical Hit and Fumble</a>
-        <a class="item" data-tab="flanking"><i class="fas fa-dice-d20"></i> Flanking</a>
-        <a class="item" data-tab="heroPoints"><i class="fas fa-dice-d20"></i> Hero Points</a>
-        <a class="item" data-tab="profDie"><i class="fas fa-dice-d20"></i> Proficiency Die</a>
+        <a class="item" data-tab="flanking"><i class="fas fa-people-arrows"></i> Flanking</a>
+        <a class="item" data-tab="heroPoints"><i class="fas fa-user-plus"></i> Hero Points</a>
+        <a class="item" data-tab="profDie"><i class="fas fa-dice"></i> Proficiency Die</a>
     </nav>
 
     <section id="config-tabs" class="content">

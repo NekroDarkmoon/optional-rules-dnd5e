@@ -3,7 +3,8 @@
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 import { moduleName, moduleTag} from "./constants.js";
 import { libWrapper } from "./lib/shim.js";
-// import { d20Roll } from "../../../../systems/dnd5e/module/dice.js";
+
+var customDies;
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //                                 Wrapped Functions
@@ -117,8 +118,8 @@ function rollAbilitySaveDAE(wrapper, ...args) {
   const abl = this.data.data.abilities[abilityId];
   const level = this.data?.data?.details?.level;
     
-  const parts = ["@mod", "@saveNeg"];
-  const data = {mod: abl.mod, saveNeg: -(abl.save)};
+  const parts = ["@saveNeg"];
+  const data = {saveNeg: -(abl.prof)};
 
   // Change Proficiency for roll here if avaialble.
   if (abl.prof > 0) {
@@ -219,15 +220,30 @@ function rollSkill(wrapper, ...args) {
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //                                    Patches
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-export let diePatching = () => {
-    libWrapper.register(moduleName, "CONFIG.Item.documentClass.prototype.getRollData", getRollData, "OVERRIDE", {chain: true});
-    libWrapper.register(moduleName, "CONFIG.Actor.documentClass.prototype.rollAbilitySave", rollAbilitySave, "OVERRIDE", {chain: true});
-    libWrapper.register(moduleName, "CONFIG.Actor.documentClass.prototype.rollSkill", rollSkill, "OVERRIDE", {chain: true});
+/**
+ * 
+ * @param profDie 
+ */
+export let diePatching = (profDie) => {
+
+  customDies = profDie;
+
+  libWrapper.register(moduleName, "CONFIG.Item.documentClass.prototype.getRollData", getRollData, "OVERRIDE", {chain: true});
+  libWrapper.register(moduleName, "CONFIG.Actor.documentClass.prototype.rollAbilitySave", rollAbilitySave, "OVERRIDE", {chain: true});
+  libWrapper.register(moduleName, "CONFIG.Actor.documentClass.prototype.rollSkill", rollSkill, "OVERRIDE", {chain: true});
 }
 
-export let diePatchingDAE = () => {
-    libWrapper.register(moduleName, "CONFIG.Item.documentClass.prototype.getRollData", getRollData, "OVERRIDE", {chain: true});
-    libWrapper.register(moduleName, "CONFIG.Actor.documentClass.prototype.rollAbilitySave", rollAbilitySaveDAE, "WRAPPER");
-    libWrapper.register(moduleName, "CONFIG.Actor.documentClass.prototype.rollSkill", rollSkill, "OVERRIDE", {chain: true});
-    libWrapper.register(moduleName, "CONFIG.Actor.documentClass.prototype.getRollData", getRollDataDAE, "WRAPPER");
+
+/**
+ * 
+ * @param profDie 
+ */
+export let diePatchingDAE = (profDie) => {
+  
+  customDies = profDie;
+  
+  libWrapper.register(moduleName, "CONFIG.Item.documentClass.prototype.getRollData", getRollData, "OVERRIDE", {chain: true});
+  libWrapper.register(moduleName, "CONFIG.Actor.documentClass.prototype.rollAbilitySave", rollAbilitySaveDAE, "WRAPPER");
+  libWrapper.register(moduleName, "CONFIG.Actor.documentClass.prototype.rollSkill", rollSkill, "OVERRIDE", {chain: true});
+  libWrapper.register(moduleName, "CONFIG.Actor.documentClass.prototype.getRollData", getRollDataDAE, "WRAPPER");
 } 

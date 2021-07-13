@@ -95,6 +95,16 @@ class ORDnD5e extends FormApplication{
                         value: game.settings.get(moduleName, "flanking-mod"),
                         isNumber: true,
                         client: game.user.isGM
+                    },
+
+                    creatureSize: {
+                        name: "Flank Based on creature Choice",
+                        hint: "Restrict flanking to a creature size and below.",
+                        id: 'creatureSize',
+                        value: game.settings.get(moduleName, "creatureSize"),
+                        isChoice: true,
+                        choices: ["None", "Tiny", "Small", "Medium", "Large", "Huge", "Gargantuan"],
+                        client: game.user.isGM
                     }
 
                 },
@@ -109,7 +119,6 @@ class ORDnD5e extends FormApplication{
                         isCheckbox: true,
                         client: game.user.isGM
                     },
-
                 },
 
                 // Settigns for Proficiency Die
@@ -167,6 +176,33 @@ const tableExists = function (tableName) {
     if (rollTable == undefined) {
         ui.notifications.error(`${moduleTag} | RollTable named ${tableName} not found.`)
     }
+};
+
+const flankCreatureMap = async function (choice) {
+    var size = -1;
+    switch (choice) {
+        case "Tiny":
+            size = 1;
+            break;
+        case "Small":
+            size = 1;
+            break;
+        case "Medium":
+            size = 1;
+            break;
+        case "Large":
+            size = 2;
+            break;
+        case "Huge":
+            size = 3;
+            break;
+        case "Gargantuan":
+            size = 4;
+            break;
+    }
+    
+    await game.settings.set(moduleName, 'internalCreatureSize', size);
+    return;
 };
 
 /**
@@ -244,6 +280,32 @@ export const RegisterSettings = async function() {
         onChange: debounceReload
     });
 
+    await game.settings.register(moduleName, 'creatureSize', {
+        name: "Flank based on creature Size",
+        scope: 'world',
+        config: false,
+        type: String,
+        onChange: flankCreatureMap
+    });
+
+    await game.settings.register(moduleName, 'internalCreatureSize', {
+        name: "Internal Creature Size",
+        scope: 'world',
+        config: false,
+        type: Number,
+        onChange: debounceReload
+    });
+
+    await game.settings.register(moduleName, 'variant', {
+        name: "Variant Flanking Rules",
+        scope: 'world',
+        config: false,
+        type: Boolean,
+        default: false,
+        onChange: debounceReload
+    });
+
+
     // Settings for Hero Points
     await game.settings.register(moduleName, 'use-hero-points', {
         name: "Use Hero Points",
@@ -268,7 +330,6 @@ export const RegisterSettings = async function() {
         type: Object,
         default: null
     });
-
     
     // Settings for proficiency die 
     await game.settings.register(moduleName, 'use-prof-die', {

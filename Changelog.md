@@ -1,5 +1,16 @@
 # Changelog
 
+### V0.2.5 - Flanking
+**Critial Hit Changes**
+- Fixed a minor bug with Critical Hit and Fumble automation.
+
+**Flanking Changes**
+- Added the ability to set restrictions on target size.
+
+**Proficiency Die Changes**
+- Fixed support for DAE.
+
+
 ### V0.2.4 - Flanking
 **Flanking Changes**
 - Flanking now only applies to melee weapon attacks.
