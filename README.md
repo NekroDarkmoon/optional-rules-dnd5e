@@ -21,6 +21,11 @@ Some of the optional rules depend on other modules. While it is not required to 
 - Critical Hit and Fumble --> MidiQol.
 
 
+## Limitations
+- Flanking currently does not support hexes.
+- Prof Die does not convert save dc's to use prof die's.
+
+
 ## Installation Guide
 Paste the following link in the install module section of foundry.
 https://github.com/NekroDarkmoon/optional-rules-dnd5e/releases/latest/download/module.json

@@ -143,8 +143,8 @@ class ORDnD5e extends FormApplication{
      * 
      * @param {*} html 
      */
-    activeListeners(html){
-        super.activeListeners(html);
+    activateListeners(html){
+        super.activateListeners(html);
     }
 
     /**
