@@ -6,7 +6,7 @@ import {RegisterSettings} from "./modules/settings.js";
 import {CritHitFumble} from "./modules/critical-hit-fumble.mjs";
 import {heroPoints} from "./modules/heroPoints.mjs";
 // import { diePatching, diePatchingDAE } from "./modules/proficiencyDie.mjs";
-import { Flanking } from "./modules/flanking.mjs";
+import { flanking } from "./modules/flanking.js";
 
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -49,7 +49,7 @@ Hooks.once('setup', async function() {
         };
         console.log(settings);
 
-        await Flanking(settings);
+        await flanking(settings);
         console.info(`${moduleTag} | Loaded Flanking System.`);
     }
 
