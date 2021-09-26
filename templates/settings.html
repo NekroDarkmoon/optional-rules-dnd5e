@@ -33,7 +33,7 @@
 <form class="flexcol" autocomplete="off">
     <!-- Tabs -->
     <nav class="sheet-tabs tabs" data-group="sections">
-        <a class="item active" data-tab="critHitFumble"><i class="fas fa-dice-d20"></i> Critical Hit and Fumble</a>
+        <a class="item" data-tab="critHitFumble"><i class="fas fa-dice-d20"></i> Critical Hit and Fumble</a>
         <a class="item" data-tab="flanking"><i class="fas fa-people-arrows"></i> Flanking</a>
         <a class="item" data-tab="heroPoints"><i class="fas fa-user-plus"></i> Hero Points</a>
         <a class="item" data-tab="profDie"><i class="fas fa-dice"></i> Proficiency Die</a>
@@ -41,9 +41,8 @@
 
     <section id="config-tabs" class="content">
         <hr>
-
         <!-- Settings for Critical Hit and Fumble -->
-        <div class="tab active" data-tab="critHitFumble">
+        <div class="tab" data-tab="critHitFumble">
             <div class="settings-list">
                 {{#each this.settings.critHitFumble}}
                 <div class="form-group">
@@ -103,7 +102,7 @@
         </div>
 
     </section>
-
+    
     <footer class="sheet-footer flexrow">
 		<button type="submit" name="submit">
 			<i class="far fa-save"></i> Save

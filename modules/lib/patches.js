@@ -15,31 +15,28 @@ export async function attackRoll(wrapped, options) {
             options.advantage = true;
             options.fastForward = true;
         }
-
-    
-    
+        
     return await wrapped(options);
 }
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //                                Get Attack To Hit
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-export function getAttackToHit(wrapped, userSettings) {
+export function getAttackToHit(wrapped) {
 
     // Flanking
-    console.error(userSettings);
     let original = wrapped();
+    let mod = game.settings.get(moduleName, "flanking-mod");
 
-    if ( this == mull ) return wrapped();
+    if ( this == null ) return wrapped();
     if ( original == null) return wrapped();
 
     if ( this?.parent?.data?.flags[moduleName] !== null &&
         this?.parent?.data?.flags[moduleName].flanking && 
-        this?.data?.data?.actionType == "mwak") original.parts.push(userSettings.mod);
+        this?.data?.data?.actionType == "mwak") original.parts.push(mod);
 
     
     return original;
-
 }
 
 

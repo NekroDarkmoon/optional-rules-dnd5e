@@ -39,7 +39,7 @@ export async function flanking(userSettings) {
     } 
 
     if ( !userSettings.adv ) {
-        libWrapper.register(moduleName, "CONFIG.Item.documentClass.prototype.getAttackToHit", getAttackToHit, "OVERRIDE", userSettings=userSettings,{chain: true});
+        libWrapper.register(moduleName, "CONFIG.Item.documentClass.prototype.getAttackToHit", getAttackToHit, "MIXED", {chain: true});
         console.log(`${moduleTag} | Patching for flanking modifier.`)
     } 
 
