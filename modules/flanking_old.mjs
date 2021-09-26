@@ -63,7 +63,6 @@ export async function Flanking(settings) {
                 }
             }
         }
-
     });
 
     // Run a patch for attack roll if midi is not found
