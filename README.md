@@ -11,20 +11,29 @@ Below is a list of the current rules that the module automates.
 - Critical hit and Fumble Rules (DMG).
 - Flanking (DMG).
 - Hero Points (DMG).
-- ProficiencyDie (DMG).
 
 
 ## Dependencies
 Some of the optional rules depend on other modules. While it is not required to install all the dependencies, it's recommended to do so. Nonetheless, if you're only using certain rules, you can just install the dependencies for the particular rule. 
 
-- LibWrapper --> Required dependecies.
+- LibWrapper --> Required dependency.
 - Critical Hit and Fumble --> MidiQol.
 
 
 ## Limitations
 - Flanking currently does not support hexes.
-- Prof Die does not convert save dc's to use prof die's.
+- Flanking currently does not support attacker greater than medium size.
 
+
+## Instructions
+
+### Critical Hit and Fumble Rules.
+- On a critical hit or fumble a d6 is rolled. If the result is above a certain threshold _(Can be changed in settings)_ the chosen rolltable is rolled on _(Can be changed in settings)_.
+
+### Flanking
+- The flanking subsystem requires the attacker to first target the enemy. Once targeted the module will calculate if the attacker is flanking a creature. If the attacker moves after targeting the creature, they must then untarget and retarget the creature again to determine if they are still flanking. 
+- Flanking can be restricted to certain size categories and below.
+- Flanking can either grant adv on the attack or a situational bonus.
 
 ## Installation Guide
 Paste the following link in the install module section of foundry.

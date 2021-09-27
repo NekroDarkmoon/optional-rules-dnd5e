@@ -5,8 +5,8 @@ import {moduleName, moduleTag} from "./modules/constants.js";
 import {RegisterSettings} from "./modules/settings.js";
 import {CritHitFumble} from "./modules/critical-hit-fumble.mjs";
 import {heroPoints} from "./modules/heroPoints.mjs";
-import { diePatching, diePatchingDAE } from "./modules/proficiencyDie.mjs";
-import { Flanking } from "./modules/flanking.mjs";
+// import { diePatching, diePatchingDAE } from "./modules/proficiencyDie.mjs";
+import { flanking } from "./modules/flanking.js";
 
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -25,27 +25,17 @@ Hooks.once('setup', async function() {
     }
 
     // Enable Proficiency Die
-    if (game.settings.get(moduleName, 'use-prof-die')) {
-        let dae = game.modules.get('dae');
-
-        let profDie = {
-            1: "1d4", 5: "1d6", 9: "1d8", 13: "1d10", 17: "1d12"
-        }
+    // if (game.settings.get(moduleName, 'use-prof-die')) {
+    //     let dae = game.modules.get('dae');
         
-        // let customDie = game.settings.get(moduleName, customDie);
-        // let customDie = {1: "2d2", 5:"2d3", 9:"2d4", 13:"2d5", 17:"2d6"};
-        // if (customDie != null){
-        //     foundry.utils.mergeObject(profDie, customDie);
-        // }
+    //     if (dae?.active) {
+    //         diePatchingDAE(profDie);
+    //         console.warn(`${moduleTag} | DAE dected. Patching for DAE instead.`);
+    //     }
+    //     else {diePatching(profDie);}
         
-        if (dae?.active) {
-            diePatchingDAE(profDie);
-            console.warn(`${moduleTag} | DAE dected. Patching for DAE instead.`);
-        }
-        else {diePatching(profDie);}
-        
-        console.info(`${moduleTag} | Loaded Proficiency Die System.`);
-    }
+    //     console.info(`${moduleTag} | Loaded Proficiency Die System.`);
+    // }
 
     // Enable Flanking
     if (game.settings.get(moduleName, 'use-flanking')) {
@@ -59,7 +49,7 @@ Hooks.once('setup', async function() {
         };
         console.log(settings);
 
-        await Flanking(settings);
+        await flanking(settings);
         console.info(`${moduleTag} | Loaded Flanking System.`);
     }
 

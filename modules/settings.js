@@ -19,7 +19,7 @@ class ORDnD5e extends FormApplication{
             height: "auto",
             closeOnSubmit: true,
             resizeable: true,
-            tabs: [{navSelector: ".tabs", contentSelector: "form", inital: "critHitFumble"}]
+            tabs: [{navSelector: ".tabs", contentSelector: "#config-tabs", inital: "critHitFumble"}]
         });
     }
 
