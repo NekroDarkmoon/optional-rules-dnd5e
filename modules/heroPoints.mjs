@@ -51,7 +51,7 @@ export const heroPoints = async function() {
                 updatedAt[currActor.data.name] = currLevel;
             }   
 
-            setHpFlag(currActor, hp);
+            await setHpFlag(currActor, hp);
             HeroPoints[currActor.data.name] = hp; 
         }
     }
@@ -88,7 +88,7 @@ export const heroPoints = async function() {
 
         if (oldHP == null || oldHP == undefined) {return;}
         if (newHP >= oldHP) {
-            setHpFlag(actor, newHP);
+            await setHpFlag(actor, newHP);
             stored[actor.data.name] = newHP;
             console.info(`${moduleTag} | Updated info`);
             console.info(stored);
@@ -97,7 +97,7 @@ export const heroPoints = async function() {
             let count = oldHP - newHP;            
             await rollHeroPoint(count, actor);
 
-            setHpFlag(actor, newHP);
+            await setHpFlag(actor, newHP);
             stored[actor.data.name] = newHP;
             console.info(`${moduleTag} | Updated info`);
             console.info(stored);
@@ -128,9 +128,9 @@ function calcHeroPoints(actor) {
  * @param actor 
  * @param hp 
  */
-function setHpFlag(actor, hp) {
+async function setHpFlag(actor, hp) {
     try {
-        actor.setFlag(moduleName, 'heroPoints', hp);
+        await actor.setFlag(moduleName, 'heroPoints', hp);
     } catch (error) {console.error(error);}
 }
 
@@ -179,7 +179,7 @@ async function displayOnSheet(char) {
  */
 async function rollHeroPoint(count, actor) {
     let roll = await new Roll(`${count}d6`).evaluate();
-    roll.toMessage({
+    await roll.toMessage({
         speaker: {alias: actor.data.name},
         flavor: "Hero Points"
     });
