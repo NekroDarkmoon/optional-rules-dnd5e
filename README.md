@@ -22,6 +22,7 @@ Some of the optional rules depend on other modules. While it is not required to 
 
 ## Limitations
 - Flanking currently does not support hexes.
+- Flanking currently does not support attacker greater than medium size.
 
 
 ## Instructions

@@ -142,7 +142,7 @@ class FlankingGrid {
 
     async friendlyExists( attacker, target, reqPos ) {
         const tokens = canvas.tokens.children[0].children;
-        console.log(reqPos)
+        console.info(reqPos);
 
         for (const token of tokens) {
             let tLoc = token._validPosition;
@@ -291,7 +291,7 @@ class Char {
             this.location = {
                 x: (this.location.x + (this.size - this.gridSize) + this.location.x) * 0.5,
                 y: (this.location.y + (this.size - this.gridSize) + this.location.y) * 0.5,
-                z: target.data.elevation
+                z: this.data.data.elevation
             }
         }
     }
