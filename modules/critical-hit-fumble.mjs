@@ -11,15 +11,14 @@ export var CritHitFumble = async function(){
         //  Check if critcal
         if (midiData.isCritical) {
             console.log("Critical Hit!");
-            critFumbleRoll("Crit");
+            await critFumbleRoll("Crit");
         } 
         // Check if fumble
         if (midiData.isFumble) {
             console.log("Critical Faliure!");
-            critFumbleRoll("Fumble");
+            await critFumbleRoll("Fumble");
         }
     });
-
 };
 
 
@@ -38,8 +37,8 @@ async function critFumbleRoll(trigger) {
 
     switch (trigger) {
         case "Crit":
-            roll = new Roll("1d6").roll();
-            roll.toMessage();
+            roll = await new Roll("1d6").evaluate();
+            await roll.toMessage();
 
             if (roll.total >= threshold) {
                 // Roll on Critical table
@@ -50,8 +49,8 @@ async function critFumbleRoll(trigger) {
             return;
             
         case "Fumble":
-            roll = new Roll("1d6").roll();
-            roll.toMessage();
+            roll = await new Roll("1d6").evaluate();
+            await roll.toMessage();
 
             if (roll.total >= threshold) {
                 // Roll on Fumble table

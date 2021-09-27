@@ -32,7 +32,7 @@ export function getAttackToHit(wrapped) {
     if ( original == null) return wrapped();
 
     if ( this?.parent?.data?.flags[moduleName] !== null &&
-        this?.parent?.data?.flags[moduleName].flanking && 
+        this?.parent?.data?.flags[moduleName]?.flanking && 
         this?.data?.data?.actionType == "mwak") original.parts.push(mod);
 
     
