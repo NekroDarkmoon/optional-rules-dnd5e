@@ -51,6 +51,15 @@ class ORDnD5e extends FormApplication{
                         client: game.user.isGM
                     },
 
+                    critHitHidden: {
+                        name: "Hide Critical Hit/Fumble Card",
+                        hint: "Choose whether to hide critical hit/fumble card",
+                        id: "crit-hit-hidden",
+                        value: game.settings.get(moduleName, "crit-hit-hidden"),
+                        isCheckbox: true,
+                        client: game.user.isGM
+                    },
+
                     critHitRolltable: {
                         name: "Critical Hit Rolltable",
                         hint: "Rolltable for Critical Hit",
@@ -238,6 +247,15 @@ export const RegisterSettings = async function() {
         type: Number,
         default: 5,
         onChange: debounceReload
+    });
+
+    await game.settings.register(moduleName, 'crit-hit-hidden', {
+        name: "Hide Critical Hit/Fumble Card",
+        hint: "Choose whether to hide critical hit/fumble card",
+        scope: 'world',
+        config: false,
+        type: Boolean,
+        default: false
     });
 
     await game.settings.register(moduleName, 'crit-hit-rolltable', {
