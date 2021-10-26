@@ -28,37 +28,23 @@ export var CritHitFumble = async function(){
 /**
  * 
  * @param trigger 
- * @returns 
+ * @returns {tableRoll}
  */
 async function critFumbleRoll(trigger) {
     
-    var roll;
-    let threshold = game.settings.get(moduleName, 'crit-fumble-threshold');
+    // Create roll
+    const threshold = game.settings.get(moduleName, 'crit-fumble-threshold');
+    const roll = await new Roll("1d6").roll({async: true});
+    await roll.toMessage();
 
-    switch (trigger) {
-        case "Crit":
-            roll = await new Roll("1d6").evaluate();
-            await roll.toMessage();
+    // Roll v threshold
+    if (roll.total < threshold) return;
 
-            if (roll.total >= threshold) {
-                // Roll on Critical table
-                let name = await game.settings.get(moduleName, 'crit-hit-rolltable');
-                let critTable = game.tables.getName(name);
-                let tableRoll = await critTable.draw();
-            }
-            return;
-            
-        case "Fumble":
-            roll = await new Roll("1d6").evaluate();
-            await roll.toMessage();
-
-            if (roll.total >= threshold) {
-                // Roll on Fumble table
-                let name = game.settings.get(moduleName, 'crit-fumble-rolltable');
-                let fumbleTable = game.tables.getName(name);
-                let tableRoll = await fumbleTable.draw();
-            }
-            return;
-    }
+    // Get table
+    const tableType = trigger === "Crit" ? 'crit-hit-rolltable' : 'crit-fumble-rolltable';
+    const tableName = game.settings.get(moduleName, tableType);
+    const rollTable = game.tables.getName(tableName);
+    const tableRoll = await rollTable.draw()
+    
+    return tableRoll
 }
-
