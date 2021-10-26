@@ -90,6 +90,7 @@ class FlankingGrid {
         if ( !actor.getFlag("midi-qol", "advantage.attack.mwak")) return true;
         await actor.setFlag("midi-qol", "advantage.attack.mwak", false);
     
+        console.log(`${moduleTag} | Flanking condition Removed.`);
     }
 
 
@@ -143,7 +144,6 @@ class FlankingGrid {
 
     async friendlyExists( attacker, target, reqPos ) {
         const tokens = canvas.tokens.children[0].children;
-        console.log(attacker.location)
         console.info(`${moduleTag} | Req Pos: ${JSON.stringify(reqPos)}`);
 
         for (const token of tokens) {
@@ -172,8 +172,6 @@ class FlankingGrid {
       const tLoc = JSON.parse(JSON.stringify(target._validPosition));
       tLoc.z = target.data.elevation;
 
-      console.log(`Original: ${JSON.stringify(tLoc)}`)
-
       const size = target.data.height;
       const hitSize = Math.max( target.hitArea.width, target.hitArea.height);
       
@@ -183,8 +181,6 @@ class FlankingGrid {
         tLoc.y = (tLoc.y + (hitSize - canvas.grid.size) + tLoc.y) * 0.5;
         console.log("Modified size");
       }
-
-      console.log(`Modified: ${JSON.stringify(tLoc)}`)
 
       return tLoc
     }
