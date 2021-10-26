@@ -3,6 +3,7 @@
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 import {moduleName, moduleTag} from "./modules/constants.js";
 import {RegisterSettings} from "./modules/settings.js";
+import {libWrapper} from "./modules/lib/shim.js"; // Make libwrapper available
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //                                    Setting Up
@@ -10,6 +11,7 @@ import {RegisterSettings} from "./modules/settings.js";
 Hooks.once('init', async function() {
     console.log(`${moduleTag} | Initializing `);
     RegisterSettings();
+    console.info(`${moduleName} | Registered Settings`);
 });
 
 Hooks.once('setup', async function() {

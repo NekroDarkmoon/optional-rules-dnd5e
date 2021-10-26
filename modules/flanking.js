@@ -56,7 +56,6 @@ class FlankingGrid {
         this.userSettings = userSettings;
     }
 
-
     // Hooks
     async onTargetToken(user, target, state){
         // Remove flanking status is untargeted
@@ -90,7 +89,7 @@ class FlankingGrid {
         if ( !(this.userSettings.midi && this.userSettings.adv) ) return true;
         if ( !actor.getFlag("midi-qol", "advantage.attack.mwak")) return true;
         await actor.setFlag("midi-qol", "advantage.attack.mwak", false);
-
+    
     }
 
 
@@ -182,19 +181,29 @@ class FlankingGrid {
 
 
     async removeFlankingFlag() {
-        // TODO: Can just use canvas.tokens.controlled[0]
-        for ( const selected of canvas.tokens.controlled) {
-            const actor = game.actors.get(selected.data.actorId);
+        const actor = game.actors.get(canvas.tokens.controlled[0].data.actorId);
 
-            if ( actor.getFlag(moduleName, "flanking") ) {
-                await actor.setFlag(moduleName, "flanking", false);
+        if ( actor.getFlag(moduleName, "flanking") ) {
+            await actor.setFlag(moduleName, "flanking", false);
 
-                if ( this.userSettings.midi && this.userSettings.adv) {
-                    await actor.setFlag("midi-qol", "advantage.attack.mwak", false);
-                }
-                console.log(`${moduleTag} | Flanking condition Removed.`);
+            if ( this.userSettings.midi && this.userSettings.adv) {
+                await actor.setFlag("midi-qol", "advantage.attack.mwak", false);
             }
+            console.log(`${moduleTag} | Flanking condition Removed.`);
         }
+
+        // for ( const selected of canvas.tokens.controlled) {
+        //     const actor = game.actors.get(selected.data.actorId);
+
+        //     if ( actor.getFlag(moduleName, "flanking") ) {
+        //         await actor.setFlag(moduleName, "flanking", false);
+
+        //         if ( this.userSettings.midi && this.userSettings.adv) {
+        //             await actor.setFlag("midi-qol", "advantage.attack.mwak", false);
+        //         }
+        //         console.log(`${moduleTag} | Flanking condition Removed.`);
+        //     }
+        // }
     }
     
 }

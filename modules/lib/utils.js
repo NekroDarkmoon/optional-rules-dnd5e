@@ -4,7 +4,7 @@
 /**
  * A class for representing token data needed for Flanking.
  */
-class TokenChar {
+export class TokenChar {
     constructor( data ) {
         this.data = data;
         this.gridSize = canvas.grid.size;
