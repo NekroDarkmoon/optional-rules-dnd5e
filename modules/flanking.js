@@ -114,6 +114,7 @@ class FlankingGrid {
         // Create Flanking Ray and calculate relative location of flanker
         const ray = new FlankingRay(attacker.location, target.location);
         const requiredPosition = ray.getFlankingPosition();
+        console.log(ray.normalized);
 
         // Check if freindly exists at target location.
         if ( await this.friendlyExists(attacker, target, requiredPosition) ) return true; 
@@ -124,8 +125,8 @@ class FlankingGrid {
 
     /**
      * 
-     * @param {number} attacker 
-     * @param {number} target 
+     * @param {object} attacker 
+     * @param {object} target 
      * 
      * @returns {boolean}
      */
@@ -142,16 +143,17 @@ class FlankingGrid {
 
     async friendlyExists( attacker, target, reqPos ) {
         const tokens = canvas.tokens.children[0].children;
-        console.info(reqPos);
+        console.log(attacker.location)
+        console.info(`${moduleTag} | Req Pos: ${JSON.stringify(reqPos)}`);
 
         for (const token of tokens) {
-            let tLoc = token._validPosition;
-            tLoc.z = token.data.elevation;
+            // Get true center
+            const tLoc = this.getTrueCenter(token);
 
             if ( !(JSON.stringify(tLoc) === JSON.stringify(reqPos)) ) continue;
             if ( !(token.data.disposition === attacker.disposition) ) continue;
 
-            // Check if unconcious
+            // Check if Unconcious
             const actor = game.actors.get(token.data.actorId);
             if (this.isUnconscious(actor)) return false;
 
@@ -164,6 +166,27 @@ class FlankingGrid {
         }
 
         return false;
+    }
+
+    getTrueCenter(target) {
+      const tLoc = JSON.parse(JSON.stringify(target._validPosition));
+      tLoc.z = target.data.elevation;
+
+      console.log(`Original: ${JSON.stringify(tLoc)}`)
+
+      const size = target.data.height;
+      const hitSize = Math.max( target.hitArea.width, target.hitArea.height);
+      
+      // Return default if medium or smaller
+      if (size > 1 ) {
+        tLoc.x = (tLoc.x + (hitSize - canvas.grid.size) + tLoc.x) * 0.5;
+        tLoc.y = (tLoc.y + (hitSize - canvas.grid.size) + tLoc.y) * 0.5;
+        console.log("Modified size");
+      }
+
+      console.log(`Modified: ${JSON.stringify(tLoc)}`)
+
+      return tLoc
     }
 
 
