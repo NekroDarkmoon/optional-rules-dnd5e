@@ -128,19 +128,7 @@ class ORDnD5e extends FormApplication{
                         isCheckbox: true,
                         client: game.user.isGM
                     },
-                },
-
-                // Settigns for Proficiency Die
-                profDie: {
-                    useProfDie: {
-                        name: "Enable Proficiency Die Automation",
-                        hint: "Enable Automation for using the optional proficiency die rules found in the DMG.",
-                        id: "use-prof-die",
-                        value: game.settings.get(moduleName, 'use-prof-die'),
-                        isCheckbox: true,
-                        client: game.user.isGM
-                    },
-                },
+                }
             }
         }
 
@@ -352,15 +340,7 @@ export const RegisterSettings = async function() {
         default: null
     });
     
-    // Settings for proficiency die 
-    await game.settings.register(moduleName, 'use-prof-die', {
-        name: "Use Proficiency die rules",
-        scope: 'world',
-        config: false,
-        type: Boolean,
-        onChange: debounceReload
-    });
-  
+    // Register Custom Setitng Sheet
     game.settings.registerMenu(moduleName, "SettingsMenu", {
         name: "Settings Menu",
         label: "Configure Settings",

@@ -86,21 +86,6 @@
             </div>
         </div>
 
-        <!-- Settings for Prof Die -->
-        <div class="tab" data-tab="profDie">
-            <div class="settings-list">
-                {{#each this.settings.profDie}}
-                <div class="form-group">
-                    {{#with this}}
-                    {{#if this.client}}
-                        {{> insertSetting}}
-                    {{/if}}
-                    {{/with}}
-                </div>
-                {{/each}}
-            </div>
-        </div>
-
     </section>
     
     <footer class="sheet-footer flexrow">
