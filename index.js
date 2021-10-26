@@ -5,7 +5,6 @@ import {moduleName, moduleTag} from "./modules/constants.js";
 import {RegisterSettings} from "./modules/settings.js";
 import {CritHitFumble} from "./modules/critical-hit-fumble.mjs";
 import {heroPoints} from "./modules/heroPoints.mjs";
-// import { diePatching, diePatchingDAE } from "./modules/proficiencyDie.mjs";
 import { flanking } from "./modules/flanking.js";
 
 
@@ -23,19 +22,6 @@ Hooks.once('setup', async function() {
         CritHitFumble();
         console.info(`${moduleTag} | Loaded Critcal Hit & Fumble System.`);
     }
-
-    // Enable Proficiency Die
-    // if (game.settings.get(moduleName, 'use-prof-die')) {
-    //     let dae = game.modules.get('dae');
-        
-    //     if (dae?.active) {
-    //         diePatchingDAE(profDie);
-    //         console.warn(`${moduleTag} | DAE dected. Patching for DAE instead.`);
-    //     }
-    //     else {diePatching(profDie);}
-        
-    //     console.info(`${moduleTag} | Loaded Proficiency Die System.`);
-    // }
 
     // Enable Flanking
     if (game.settings.get(moduleName, 'use-flanking')) {
