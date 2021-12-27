@@ -70,19 +70,33 @@ class FlankingGrid {
 		}
 
 		// Check if controlled tokens are flanking on target
-		for (const selected of canvas.tokens.controlled) {
-			if (await this.isFlanking(user, selected, target)) {
-				const actor = game.actors.get(selected.data.actorId);
-				await actor.setFlag(moduleName, 'flanking', true);
+		const selected = canvas?.tokens?.controlled[0];
+		if (!selected) return;
 
-				// Use midi for adv is exists
-				if (this.userSettings.midi && this.userSettings.adv) {
-					await actor.setFlag('midi-qol', 'advantage.attack.mwak', true);
-				}
+		if (await this.isFlanking(user, selected, target)) {
+			const actor = game.actors.get(selected.data.actorId);
+			await actor.setFlag(moduleName, 'flanking', true);
 
-				return;
-			}
+			// Use Midi if exists for adv.
+			if (this.userSettings.midi && this.userSettings.adv)
+				await actor.setFlag('midi-qol', 'advantage.attack.mwak', true);
+
+			return;
 		}
+
+		// for (const selected of canvas.tokens.controlled) {
+		// 	if (await this.isFlanking(user, selected, target)) {
+		// 		const actor = game.actors.get(selected.data.actorId);
+		// 		await actor.setFlag(moduleName, 'flanking', true);
+
+		// 		// Use midi for adv is exists
+		// 		if (this.userSettings.midi && this.userSettings.adv) {
+		// 			await actor.setFlag('midi-qol', 'advantage.attack.mwak', true);
+		// 		}
+
+		// 		return;
+		// 	}
+		// }
 	}
 
 	async onUpdateToken(...args) {
@@ -208,9 +222,9 @@ class FlankingGrid {
 		if (actor.getFlag(moduleName, 'flanking')) {
 			await actor.setFlag(moduleName, 'flanking', false);
 
-			if (this.userSettings.midi && this.userSettings.adv) {
+			if (this.userSettings.midi && this.userSettings.adv)
 				await actor.setFlag('midi-qol', 'advantage.attack.mwak', false);
-			}
+
 			console.log(`${moduleTag} | Flanking condition Removed.`);
 		}
 
