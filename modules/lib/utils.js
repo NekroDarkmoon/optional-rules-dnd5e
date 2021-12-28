@@ -18,13 +18,19 @@ export class TokenChar {
 
 	adjustLocationGrid() {
 		if (this.size > this.gridSize) {
+			// this.location = {
+			// 	x:
+			// 		(this.location.x + (this.size - this.gridSize) + this.location.x) *
+			// 		0.5,
+			// 	y:
+			// 		(this.location.y + (this.size - this.gridSize) + this.location.y) *
+			// 		0.5,
+			// 	z: this.data.data.elevation,
+			// };
+
 			this.location = {
-				x:
-					(this.location.x + (this.size - this.gridSize) + this.location.x) *
-					0.5,
-				y:
-					(this.location.y + (this.size - this.gridSize) + this.location.y) *
-					0.5,
+				x: this.location.x + (this.size - this.gridSize) * 0.5,
+				y: this.location.y + (this.size - this.gridSize) * 0.5,
 				z: this.data.data.elevation,
 			};
 		}

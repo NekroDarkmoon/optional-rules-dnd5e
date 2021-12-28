@@ -83,20 +83,6 @@ class FlankingGrid {
 
 			return;
 		}
-
-		// for (const selected of canvas.tokens.controlled) {
-		// 	if (await this.isFlanking(user, selected, target)) {
-		// 		const actor = game.actors.get(selected.data.actorId);
-		// 		await actor.setFlag(moduleName, 'flanking', true);
-
-		// 		// Use midi for adv is exists
-		// 		if (this.userSettings.midi && this.userSettings.adv) {
-		// 			await actor.setFlag('midi-qol', 'advantage.attack.mwak', true);
-		// 		}
-
-		// 		return;
-		// 	}
-		// }
 	}
 
 	async onUpdateToken(...args) {
@@ -124,8 +110,10 @@ class FlankingGrid {
 		if (attacker.disposition === target.disposition) return false;
 
 		// Check if adjacent
-		if (!this.isAdjacent(attacker.location, target.location)) return false;
-
+		if (!this.isAdjacent(attacker.location, target.location, target.height)) {
+			console.log('Not Adjacent');
+			return false;
+		}
 		// Adjust Attacker and Target size
 		attacker.adjustLocationGrid();
 		target.adjustLocationGrid();
@@ -144,46 +132,113 @@ class FlankingGrid {
 
 	/**
 	 *
-	 * @param {object} attacker
-	 * @param {object} target
+	 * @param {*} attacker
+	 * @param {*} target
 	 *
 	 * @returns {boolean}
 	 */
-	isAdjacent(attacker, target) {
+	isAdjacent(attacker, target, tHeight) {
 		let gridSize = canvas.grid.size;
 		if (
-			Math.abs(attacker.x - target.x) > target.height * gridSize ||
-			Math.abs(attacker.y - target.y) > target.height * gridSize
-		) {
+			Math.abs(attacker.x - target.x) > tHeight * gridSize ||
+			Math.abs(attacker.y - target.y) > tHeight * gridSize
+		)
 			return false;
-		}
 
 		return true;
 	}
 
+	/**
+	 *
+	 * @param {TokenChar} attacker
+	 * @param {TokenChar} target
+	 * @param {{x:Number, y:Number, z:Number}} reqPos
+	 * @returns
+	 */
 	async friendlyExists(attacker, target, reqPos) {
 		const tokens = canvas.tokens.children[0].children;
 		console.info(`${moduleTag} | Req Pos: ${JSON.stringify(reqPos)}`);
 
+		console.log(attacker);
+		// Create bounding box for attacker if size greater than medium
+		const expandCoeff = (attacker.height * attacker.gridSize) / 2;
+		console.log(expandCoeff);
+		const attackerBB = {
+			x1: reqPos.x - expandCoeff,
+			x2: reqPos.x + expandCoeff,
+			y1: reqPos.y - expandCoeff,
+			y2: reqPos.y + expandCoeff,
+			z1: reqPos.z - expandCoeff,
+			z2: reqPos.z + expandCoeff,
+		};
+
+		console.log(attackerBB);
+
 		for (const token of tokens) {
-			// Get true center
-			const tLoc = this.getTrueCenter(token);
-
-			if (!(JSON.stringify(tLoc) === JSON.stringify(reqPos))) continue;
-			if (!(token.data.disposition === attacker.disposition)) continue;
-
-			// Check if Unconcious
-			const actor = game.actors.get(token.data.actorId);
-			if (this.isUnconscious(actor)) return false;
+			// Insert Comment here
+			if (!this._isFlanker(attacker, target, token, reqPos, attackerBB))
+				continue;
 
 			await ChatMessage.create({
-				speaker: { alias: 'Optional Rules' },
+				speaker: { alias: 'Optional Rules DnD5e' },
 				content: `${attacker.data.name} & ${token.data.name} are flanking ${target.data.name}`,
 			});
 
 			return true;
 		}
 
+		// for (const token of tokens) {
+		// 	// Get true center
+		// 	const tLoc = this.getTrueCenter(token);
+
+		// 	if (!(JSON.stringify(tLoc) === JSON.stringify(reqPos))) continue;
+		// 	if (!(token.data.disposition === attacker.disposition)) continue;
+
+		// 	// Check if Unconcious
+		// 	const actor = game.actors.get(token.data.actorId);
+		// 	if (this.isUnconscious(actor)) return false;
+
+		// 	await ChatMessage.create({
+		// 		speaker: { alias: 'Optional Rules' },
+		// 		content: `${attacker.data.name} & ${token.data.name} are flanking ${target.data.name}`,
+		// 	});
+
+		// 	return true;
+		// }
+
+		return false;
+	}
+
+	_isFlanker(a, target, t, reqPos, aBB) {
+		const attackerSize = a.height;
+		const tokenSize = t.data.height;
+		const tLoc = {
+			x: t._validPosition.x,
+			y: t._validPosition.y,
+			z: t.data.elevation,
+		};
+
+		if (attackerSize === tokenSize) {
+			return JSON.stringify(tLoc) === JSON.stringify(reqPos);
+		}
+
+		if (attackerSize > tokenSize) {
+			// Check if target in attackers bb
+			const sizeDiff = (attackerSize - tokenSize) * a.gridSize;
+			console.log(sizeDiff);
+			if (
+				tLoc.x >= aBB.x1 &&
+				tLoc.x <= aBB.x2 &&
+				tLoc.y >= aBB.y1 &&
+				tLoc.y <= aBB.y2 &&
+				tLoc.z >= aBB.z1 &&
+				tLoc.z <= aBB.z2
+			)
+				return this.isAdjacent(target.location, tLoc);
+			else return false;
+		}
+
+		// If friendly is bigger
 		return false;
 	}
 
