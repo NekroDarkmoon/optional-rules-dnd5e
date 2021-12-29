@@ -1,3 +1,6 @@
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//                             				Imports
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 import { moduleName, moduleTag } from './constants.js';
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -6,7 +9,7 @@ import { moduleName, moduleTag } from './constants.js';
 /**
  *
  */
-export var CritHitFumble = async function () {
+export const CritHitFumble = async function () {
 	Hooks.on('midi-qol.AttackRollComplete', async midiData => {
 		//  Check if critcal
 		if (midiData.isCritical) {
@@ -31,7 +34,7 @@ export var CritHitFumble = async function () {
  */
 async function critFumbleRoll(trigger) {
 	// Create roll
-	const threshold = game.settings.get(moduleName, 'crit-fumble-threshold');
+	const threshold = game.settings.get(moduleName, 'critFumbleThreshold');
 	const roll = await new Roll('1d6').roll({ async: true });
 	await roll.toMessage();
 
@@ -40,7 +43,7 @@ async function critFumbleRoll(trigger) {
 
 	// Get table
 	const tableType =
-		trigger === 'Crit' ? 'crit-hit-rolltable' : 'crit-fumble-rolltable';
+		trigger === 'Crit' ? 'critHitRolltable' : 'critFumbleRolltable';
 	const tableName = game.settings.get(moduleName, tableType);
 	const rollTable = game.tables.getName(tableName);
 	const tableRoll = await rollTable.draw();

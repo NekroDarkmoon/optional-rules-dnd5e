@@ -41,7 +41,7 @@ class ORDnD5e extends FormApplication {
 					useCritHitFumble: {
 						name: 'Critical Hit and Fumble Rules',
 						hint: 'Use the critical hit and fumble rules found in the DMG.',
-						id: 'use-crit-hit-fumble',
+						id: 'useCritHitFumble',
 						value: game.settings.get(moduleName, 'use-crit-hit-fumble'),
 						isCheckbox: true,
 						client: game.user.isGM,
@@ -50,7 +50,7 @@ class ORDnD5e extends FormApplication {
 					critHitThreshold: {
 						name: 'Critical Fumble Threshold',
 						hint: 'Change the triggering threshold for the rolltable roll. (Default is set to 5).',
-						id: 'crit-fumble-threshold',
+						id: 'critFumbleThreshold',
 						value: game.settings.get(moduleName, 'crit-fumble-threshold'),
 						isRange: true,
 						range: { min: 1, max: 6 },
@@ -60,7 +60,7 @@ class ORDnD5e extends FormApplication {
 					critHitHidden: {
 						name: 'Hide Critical Hit/Fumble Card',
 						hint: 'Choose whether to hide critical hit/fumble card',
-						id: 'crit-hit-hidden',
+						id: 'critHitHidden',
 						value: game.settings.get(moduleName, 'crit-hit-hidden'),
 						isCheckbox: true,
 						client: game.user.isGM,
@@ -69,7 +69,7 @@ class ORDnD5e extends FormApplication {
 					critHitRolltable: {
 						name: 'Critical Hit Rolltable',
 						hint: 'Rolltable for Critical Hit',
-						id: 'crit-hit-rolltable',
+						id: 'critHitRolltable',
 						value: game.settings.get(moduleName, 'crit-hit-rolltable'),
 						client: game.user.isGM,
 					},
@@ -77,7 +77,7 @@ class ORDnD5e extends FormApplication {
 					critFumbleRolltable: {
 						name: 'Critical Fumble Rolltable',
 						hint: 'Rolltable for Critical Fumble',
-						id: 'crit-fumble-rolltable',
+						id: 'critFumbleRolltable',
 						value: game.settings.get(moduleName, 'crit-fumble-rolltable'),
 						client: game.user.isGM,
 					},
@@ -237,7 +237,7 @@ const debounceReload = debounce(() => window.location.reload(), 100);
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 export const RegisterSettings = async function () {
 	// Settings for critical hit and fumble tables
-	await game.settings.register(moduleName, 'use-crit-hit-fumble', {
+	await game.settings.register(moduleName, 'useCritHitFumble', {
 		name: 'Use Critical hit and fumble rules',
 		scope: 'world',
 		config: false,
@@ -246,7 +246,7 @@ export const RegisterSettings = async function () {
 		onChange: debounceReload,
 	});
 
-	await game.settings.register(moduleName, 'crit-fumble-threshold', {
+	await game.settings.register(moduleName, 'critFumbleThreshold', {
 		name: 'Set Critical Fumble Threshold',
 		hint: 'Change the triggering threshold for the rolltable roll.',
 		scope: 'world',
@@ -256,7 +256,7 @@ export const RegisterSettings = async function () {
 		onChange: debounceReload,
 	});
 
-	await game.settings.register(moduleName, 'crit-hit-hidden', {
+	await game.settings.register(moduleName, 'critHitHidden', {
 		name: 'Hide Critical Hit/Fumble Card',
 		hint: 'Choose whether to hide critical hit/fumble card',
 		scope: 'world',
@@ -265,7 +265,7 @@ export const RegisterSettings = async function () {
 		default: false,
 	});
 
-	await game.settings.register(moduleName, 'crit-hit-rolltable', {
+	await game.settings.register(moduleName, 'critHitRolltable', {
 		name: 'Critical hit rolltable',
 		scope: 'world',
 		config: false,
@@ -273,7 +273,7 @@ export const RegisterSettings = async function () {
 		onChange: tableExists,
 	});
 
-	await game.settings.register(moduleName, 'crit-fumble-rolltable', {
+	await game.settings.register(moduleName, 'critFumbleRolltable', {
 		name: 'Critical fumble rolltable',
 		scope: 'world',
 		config: false,

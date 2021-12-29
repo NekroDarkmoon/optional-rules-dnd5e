@@ -17,7 +17,7 @@ Hooks.once('init', async function () {
 
 Hooks.once('setup', async function () {
 	// Enable Critical Hit Fumble Rules
-	if (game.settings.get(moduleName, 'use-crit-hit-fumble')) {
+	if (game.settings.get(moduleName, 'useCritHitFumble')) {
 		const { CritHitFumble } = await import('./modules/criticalHitFumble.js');
 		CritHitFumble();
 		console.info(`${moduleTag} | Loaded Critcal Hit & Fumble System.`);

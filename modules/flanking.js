@@ -189,7 +189,6 @@ class FlankingGrid {
 		const tokens = canvas.tokens.children[0].children;
 		console.info(`${moduleTag} | Req Pos: ${JSON.stringify(reqPos)}`);
 
-		console.log(attacker);
 		// Create bounding box for attacker if size greater than medium
 		const expandCoeff = (attacker.height * attacker.gridSize) / 2;
 		const attackerBB = {
