@@ -14,8 +14,8 @@ class ORDnD5e extends FormApplication {
 		return mergeObject(super.defaultOptions, {
 			title: 'Optional Rules 5e Settings',
 			id: 'ordnd5e-settings',
-			template: `modules/${moduleName}/templates/settings.html`,
-			width: '550',
+			template: `modules/${moduleName}/templates/settings.hbs`,
+			width: '600	',
 			height: 'auto',
 			closeOnSubmit: true,
 			resizeable: true,
@@ -94,8 +94,17 @@ class ORDnD5e extends FormApplication {
 						client: game.user.isGM,
 					},
 
+					flankSizeDiff: {
+						name: 'Flank across creature sizes',
+						hint: '[Experimental] Allow flanking when the attacker and the ally are of different sizes.',
+						id: 'flankSizeDiff',
+						value: game.settings.get(moduleName, 'flankSizeDiff'),
+						isCheckbox: true,
+						client: game.user.isGM,
+					},
+
 					useFlankingMod: {
-						name: 'Variant Rule- Use Modifiers',
+						name: 'Variant Rule - Use Modifiers',
 						hint: 'Use modifiers instead of giving advantage when flanking.',
 						id: 'use-flanking-mod',
 						value: game.settings.get(moduleName, 'use-flanking-mod'),
@@ -114,7 +123,7 @@ class ORDnD5e extends FormApplication {
 
 					creatureSize: {
 						name: 'Flank Based on creature size',
-						hint: 'Restrict flanking to a creature size and below.',
+						hint: 'Restrict flanking target to a creature of size x and below.',
 						id: 'creatureSize',
 						value: game.settings.get(moduleName, 'creatureSize'),
 						isChoice: true,
@@ -315,13 +324,12 @@ export const RegisterSettings = async function () {
 		onChange: debounceReload,
 	});
 
-	await game.settings.register(moduleName, 'variant', {
-		name: 'Variant Flanking Rules',
+	await game.settings.register(moduleName, 'flankSizeDiff', {
+		name: '[Experimental] Enable flanking across creature sizes',
 		scope: 'world',
 		config: false,
 		type: Boolean,
 		default: false,
-		onChange: debounceReload,
 	});
 
 	// Settings for Hero Points

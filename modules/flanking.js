@@ -7,15 +7,6 @@ import { libWrapper } from './lib/shim.js';
 import { TokenChar } from './lib/utils.js';
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//                                    Flanking
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//                                    Flanking
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//                                    Flanking
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //                                Flanking Function
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 export async function flanking(userSettings) {
@@ -215,6 +206,8 @@ class FlankingGrid {
 				return JSON.stringify(this.getTrueCenter(t)) === JSON.stringify(reqPos);
 			else return JSON.stringify(tLoc) === JSON.stringify(reqPos);
 		}
+
+		if (!game.settings.get(moduleName, 'flankSizeDiff')) return false;
 
 		if (attackerSize > tokenSize) {
 			// Construct token rectangle

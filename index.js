@@ -12,6 +12,7 @@ Hooks.once('init', async function () {
 	console.log(`${moduleTag} | Initializing `);
 	RegisterSettings();
 	console.info(`${moduleName} | Registered Settings`);
+	loadTemplates([`modules/${moduleName}/templates/settings.hbs`]);
 });
 
 Hooks.once('setup', async function () {
@@ -33,7 +34,6 @@ Hooks.once('setup', async function () {
 				: true,
 			mod: await game.settings.get(moduleName, 'flanking-mod'),
 			size: await game.settings.get(moduleName, 'internalCreatureSize'),
-			variant: (await game.settings.get(moduleName, 'variant')) ? true : false,
 		};
 		console.log(settings);
 
