@@ -87,6 +87,7 @@ class FlankingGrid {
 
 	async onUpdateToken(...args) {
 		const actor = game.actors.get(args[0].data.actorId);
+		if (!actor) return true;
 
 		if (!actor.getFlag(moduleName, 'flanking')) return true;
 		await actor.setFlag(moduleName, 'flanking', false);
