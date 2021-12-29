@@ -6,9 +6,23 @@ import { attackRoll, getAttackToHit } from './lib/patches.js';
 import { libWrapper } from './lib/shim.js';
 import { TokenChar } from './lib/utils.js';
 
+/**
+ * @typedef {Object} Rectangle
+ * @param {Number} x1
+ * @param {Number} x2
+ * @param {Number} y1
+ * @param {Number} y2
+ * @param {Number} z1
+ * @param {Number} z2
+ */
+
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //                                Flanking Function
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/**
+ *
+ * @param {Object} userSettings
+ */
 export async function flanking(userSettings) {
 	const flanking = new FlankingGrid(userSettings);
 
@@ -47,12 +61,22 @@ export async function flanking(userSettings) {
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //                                  Flanking Grid
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/**
+ * A class for the calculation of flanking on a square grid
+ */
 class FlankingGrid {
 	constructor(userSettings) {
 		this.userSettings = userSettings;
 	}
 
 	// Hooks
+	/**
+	 *
+	 * @param {*} user
+	 * @param {*} target
+	 * @param {*} state
+	 * @returns {Boolean}
+	 */
 	async onTargetToken(user, target, state) {
 		// Remove flanking status is untargeted
 		if (!state) {
@@ -62,7 +86,7 @@ class FlankingGrid {
 
 		// Check if controlled tokens are flanking on target
 		const selected = canvas?.tokens?.controlled[0];
-		if (!selected) return;
+		if (!selected) return false;
 
 		if (await this.isFlanking(user, selected, target)) {
 			const actor = game.actors.get(selected.data.actorId);
@@ -72,13 +96,20 @@ class FlankingGrid {
 			if (this.userSettings.midi && this.userSettings.adv)
 				await actor.setFlag('midi-qol', 'advantage.attack.mwak', true);
 
-			return;
+			return true;
 		}
+
+		return false;
 	}
 
+	/**
+	 *
+	 * @param  {...any} args
+	 * @returns {Boolean}
+	 */
 	async onUpdateToken(...args) {
 		const actor = game.actors.get(args[0].data.actorId);
-		if (!actor) return true;
+		if (!actor) return false;
 
 		if (!actor.getFlag(moduleName, 'flanking')) return true;
 		await actor.setFlag(moduleName, 'flanking', false);
@@ -88,8 +119,16 @@ class FlankingGrid {
 		await actor.setFlag('midi-qol', 'advantage.attack.mwak', false);
 
 		console.log(`${moduleTag} | Flanking condition Removed.`);
+		return true;
 	}
 
+	/**
+	 *
+	 * @param {*} user
+	 * @param {*} attackerData
+	 * @param {*} targetData
+	 * @returns {Boolean}
+	 */
 	async isFlanking(user, attackerData, targetData) {
 		// Create attacker and target
 		const attacker = new TokenChar(attackerData);
@@ -123,10 +162,10 @@ class FlankingGrid {
 
 	/**
 	 *
-	 * @param {*} attacker
-	 * @param {*} target
-	 *
-	 * @returns {boolean}
+	 * @param {import('./lib/utils.js').Point} attacker
+	 * @param {import('./lib/utils.js').Point} target
+	 * @param {Number} aHeight
+	 * @returns {Boolean}
 	 */
 	isAdjacent(attacker, target, aHeight) {
 		let gridSize = canvas.grid.size;
@@ -143,7 +182,7 @@ class FlankingGrid {
 	 *
 	 * @param {TokenChar} attacker
 	 * @param {TokenChar} target
-	 * @param {{x:Number, y:Number, z:Number}} reqPos
+	 * @param {import('./lib/utils.js').Point} reqPos
 	 * @returns
 	 */
 	async friendlyExists(attacker, target, reqPos) {
@@ -188,6 +227,15 @@ class FlankingGrid {
 		return false;
 	}
 
+	/**
+	 *
+	 * @param {TokenChar} a
+	 * @param {TokenChar} target
+	 * @param {*} t
+	 * @param {import('./lib/utils.js').Point} reqPos
+	 * @param {Rectangle} aBB
+	 * @returns {Boolean}
+	 */
 	_isFlanker(a, target, t, reqPos, aBB) {
 		console.log(t.data.name);
 		const attackerSize = a.height;
@@ -211,6 +259,7 @@ class FlankingGrid {
 
 		if (attackerSize > tokenSize) {
 			// Construct token rectangle
+			/** @type {Rectangle} */
 			const tBB = { x1: tLoc.x, y1: tLoc.y, z1: tLoc.z };
 			tBB.x2 = tBB.x1 + (tokenSize - 1) * a.gridSize;
 			tBB.y2 = tBB.y1 + (tokenSize - 1) * a.gridSize;
@@ -232,6 +281,7 @@ class FlankingGrid {
 
 		if (tokenSize > attackerSize) {
 			// Construct token rectangle
+			/** @type {Rectangle} */
 			const tBB = { x1: tLoc.x, y1: tLoc.y, z1: tLoc.z };
 			tBB.x2 = tBB.x1 + (tokenSize - 1) * a.gridSize;
 			tBB.y2 = tBB.y1 + (tokenSize - 1) * a.gridSize;
@@ -252,6 +302,11 @@ class FlankingGrid {
 		return false;
 	}
 
+	/**
+	 *
+	 * @param {*} target
+	 * @returns {import('./lib/utils.js').Point}
+	 */
 	getTrueCenter(target) {
 		const tLoc = JSON.parse(JSON.stringify(target._validPosition));
 		tLoc.z = target.data.elevation;
@@ -269,6 +324,11 @@ class FlankingGrid {
 		return tLoc;
 	}
 
+	/**
+	 *
+	 * @param {*} actor
+	 * @returns {Boolean}
+	 */
 	isUnconscious(actor) {
 		const effects = actor.data.effects?._source;
 		if (actor.data.data.attributes.hp.value < 1) return true;
@@ -333,7 +393,7 @@ class FlankingRay {
 
 	/**
 	 *
-	 * @returns {Array}
+	 * @returns {Array<Number>}
 	 */
 	normalized() {
 		const { x: x1, y: y1, z: z1 } = this.origin;
@@ -345,7 +405,7 @@ class FlankingRay {
 
 	/**
 	 *
-	 * @returns {Object}
+	 * @returns {import('./lib/utils.js').Point}
 	 */
 	getFlankingPosition() {
 		const { x: x1, y: y1, z: z1 } = this.target;

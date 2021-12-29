@@ -2,6 +2,13 @@
 //                                     TokenChar
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 /**
+ * @typedef {Object} Point
+ * @property {Number} x
+ * @property {Number} y
+ * @property {Number} z
+ */
+
+/**
  * A class for representing token data needed for Flanking.
  */
 export class TokenChar {
@@ -17,6 +24,9 @@ export class TokenChar {
 		this.validPos = this.calcLocation();
 	}
 
+	/**
+	 * @memberof TokenChar
+	 */
 	adjustLocationGrid() {
 		if (this.size > this.gridSize) {
 			this.location = {
@@ -27,22 +37,41 @@ export class TokenChar {
 		}
 	}
 
+	/**
+	 * @memberof TokenChar
+	 */
 	adjustLocationHex() {}
 
+	/**
+	 * Gets the valid location of a token and adds elevation data to it.
+	 * @returns {Point}
+	 */
 	calcLocation() {
 		const location = JSON.parse(JSON.stringify(this.data._validPosition));
 		location.z = this.data.data.elevation;
 		return location;
 	}
 
+	/**
+	 *
+	 * @returns {Number}
+	 */
 	fetchDisposition() {
 		return this.data.data.disposition;
 	}
 
+	/**
+	 *
+	 * @returns {Number}
+	 */
 	fetchHeight() {
 		return this.data.data.height;
 	}
 
+	/**
+	 *
+	 * @returns {Number}
+	 */
 	fetchSize() {
 		return Math.max(this.data.hitArea.width, this.data.hitArea.height);
 	}
