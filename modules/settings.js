@@ -66,19 +66,19 @@ class ORDnD5e extends FormApplication {
 						client: game.user.isGM,
 					},
 
-					mainCritRollTable: {
+					mainCritTable: {
 						name: 'Critical Hit Rolltable',
 						hint: 'Rolltable for Critical Hit',
-						id: 'critHitRolltable',
+						id: 'mainCritTable',
 						value: game.settings.get(moduleName, 'mainCritRolltable'),
 						client: game.user.isGM,
 					},
 
-					mainFumbleRollTable: {
+					mainFumbleTable: {
 						name: 'Critical Fumble Rolltable',
 						hint: 'Rolltable for Critical Fumble',
-						id: 'critFumbleRolltable',
-						value: game.settings.get(moduleName, 'mainFumbleRolltable'),
+						id: 'mainFumbleTable',
+						value: game.settings.get(moduleName, 'mainFumbleTable'),
 						client: game.user.isGM,
 					},
 				},
@@ -194,7 +194,10 @@ const tableExists = function (tableName) {
 		ui.notifications.error(
 			`${moduleTag} | RollTable named ${tableName} not found.`
 		);
+		return;
 	}
+
+	Hooks.call('ordnd5e-rollTableUpdate', []);
 };
 
 const flankCreatureMap = async function (choice) {
@@ -265,16 +268,48 @@ export const RegisterSettings = async function () {
 		default: false,
 	});
 
-	await game.settings.register(moduleName, 'mainHitRolltable', {
-		name: 'Critical hit rolltable',
+	await game.settings.register(moduleName, 'mainCritTable', {
+		name: 'Main Critical hit rolltable',
 		scope: 'world',
 		config: false,
 		type: String,
 		onChange: tableExists,
 	});
 
-	await game.settings.register(moduleName, 'mainFumbleRolltable', {
-		name: 'Critical fumble rolltable',
+	await game.settings.register(moduleName, 'mainFumbleTable', {
+		name: 'Main Critical fumble rolltable',
+		scope: 'world',
+		config: false,
+		type: String,
+		onChange: tableExists,
+	});
+
+	await game.settings.register(moduleName, 'meleeCritTable', {
+		name: 'Melee Critical hit rolltable',
+		scope: 'world',
+		config: false,
+		type: String,
+		onChange: tableExists,
+	});
+
+	await game.settings.register(moduleName, 'meleeFumbleTable', {
+		name: 'Melee Critical fumble rolltable',
+		scope: 'world',
+		config: false,
+		type: String,
+		onChange: tableExists,
+	});
+
+	await game.settings.register(moduleName, 'spellCritTable', {
+		name: 'Spell Critical hit rolltable',
+		scope: 'world',
+		config: false,
+		type: String,
+		onChange: tableExists,
+	});
+
+	await game.settings.register(moduleName, 'spellFumbleTable', {
+		name: 'Spell Critical fumble rolltable',
 		scope: 'world',
 		config: false,
 		type: String,

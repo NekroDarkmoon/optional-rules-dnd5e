@@ -7,10 +7,27 @@ import { moduleName, moduleTag } from './constants.js';
  * @typedef {Object} CritHitSettings
  * @property {Boolean} hidden
  * @property {Number} threshold
+ * @property {String} mainCritTable
+ * @property {String} mainFumbleTable
+ * @property {String} meleeCritTable
+ * @property {String} meleeFumbleTable
+ * @property {String} spellCritTable
+ * @property {String} spellFumbleTable
  */
 
 /**@type {CritHitSettings}*/
 const SETTINGS = {};
+
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//                            	Populate Settings
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+function populateSettings() {
+	// Populate Settings
+	SETTINGS.hidden = game.settings.get(moduleName, 'critHitHidden');
+	SETTINGS.threshold = game.settings.get(moduleName, 'critFumbleThreshhold');
+	SETTINGS.mainCritTable = game.settings.get(moduleName, 'mainCritTable');
+	SETTINGS.mainFumbleTable = game.settings.get(moduleName, 'mainFumbleTable');
+}
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //                             Initilization Function
@@ -19,14 +36,15 @@ const SETTINGS = {};
  *
  */
 export const CritHitFumble = async function () {
-	// Populate Settings
-	SETTINGS.hidden = game.settings.get(moduleName, 'critHitHidden');
-	SETTINGS.threshold = game.settings.get(moduleName, 'critFumbleThreshhold');
-	SETTINGS.mainHitTable = game.settings.get(moduleName, 'mainCritRollTable');
-	SETTINGS.mainFumbleTable = game.settings.get(
-		moduleName,
-		'mainFumbleRollTable'
-	);
+	// Populate settings initially and then repopulate everytime table changes.
+	populateSettings();
+	Hooks.on('ordnd5e-rollTableUpdate', (...args) => {
+		populateSettings();
+		console.info(`${moduleTag} | Updated Crit Hit & Fumble Settings`);
+	});
+
+	// Register Crit Hooks
+	// Register Fumble Hooks
 
 	Hooks.on('midi-qol.AttackRollComplete', async midiData => {
 		//  Check if critcal
