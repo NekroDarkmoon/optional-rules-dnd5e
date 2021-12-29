@@ -67,18 +67,50 @@ class ORDnD5e extends FormApplication {
 					},
 
 					mainCritTable: {
-						name: 'Critical Hit Rolltable',
-						hint: 'Rolltable for Critical Hit',
+						name: 'Main Critical Hit Rolltable',
+						hint: 'Main Rolltable for Critical Hit.',
 						id: 'mainCritTable',
 						value: game.settings.get(moduleName, 'mainCritRolltable'),
 						client: game.user.isGM,
 					},
 
 					mainFumbleTable: {
-						name: 'Critical Fumble Rolltable',
-						hint: 'Rolltable for Critical Fumble',
+						name: 'Main Critical Fumble Rolltable',
+						hint: 'Main Rolltable for Critical Fumble',
 						id: 'mainFumbleTable',
 						value: game.settings.get(moduleName, 'mainFumbleTable'),
+						client: game.user.isGM,
+					},
+
+					meleeCritTable: {
+						name: 'Melee Critical Fumble Rolltable',
+						hint: 'Rolltable for Melee Critical Fumble. [Overrides main table if set]',
+						id: 'meleeCritTable',
+						value: game.settings.get(moduleName, 'meleeCritTable'),
+						client: game.user.isGM,
+					},
+
+					meleeFumbleTable: {
+						name: 'Melee Critical Fumble Rolltable',
+						hint: 'Rolltable for Melee Critical Fumble. [Overrides main table if set]',
+						id: 'mainFumbleTable',
+						value: game.settings.get(moduleName, 'meleeFumbleTable'),
+						client: game.user.isGM,
+					},
+
+					spellCritTable: {
+						name: 'Spell Critical Fumble Rolltable',
+						hint: 'Rolltable for Critical Fumble. [Overrides main table if set]',
+						id: 'spellCritTable',
+						value: game.settings.get(moduleName, 'spellCritTable'),
+						client: game.user.isGM,
+					},
+
+					spellFumbleTable: {
+						name: 'Spell Critical Fumble Rolltable',
+						hint: 'Rolltable for Spell Critical Fumble. [Overrides main table if set]',
+						id: 'spellFumbleTable',
+						value: game.settings.get(moduleName, 'spellFumbleTable'),
 						client: game.user.isGM,
 					},
 				},
