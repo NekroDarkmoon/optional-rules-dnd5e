@@ -277,6 +277,7 @@ class FlankingGrid {
 
 	isUnconscious(actor) {
 		const effects = actor.data.effects?._source;
+		if (actor.data.data.attributes.hp.value < 1) return true;
 		if (effects == null) return false;
 
 		for (let index = 0; index < effects.length; index++) {
@@ -288,7 +289,11 @@ class FlankingGrid {
 	}
 
 	async removeFlankingFlag() {
-		const actor = game.actors.get(canvas.tokens.controlled[0].data.actorId);
+		const selected = canvas?.tokens?.controlled[0];
+		if (!selected) return;
+
+		// Get Actor
+		const actor = game.actors.get(selected.data.actorId);
 
 		if (actor.getFlag(moduleName, 'flanking')) {
 			await actor.setFlag(moduleName, 'flanking', false);
@@ -298,19 +303,6 @@ class FlankingGrid {
 
 			console.log(`${moduleTag} | Flanking condition Removed.`);
 		}
-
-		// for ( const selected of canvas.tokens.controlled) {
-		//     const actor = game.actors.get(selected.data.actorId);
-
-		//     if ( actor.getFlag(moduleName, "flanking") ) {
-		//         await actor.setFlag(moduleName, "flanking", false);
-
-		//         if ( this.userSettings.midi && this.userSettings.adv) {
-		//             await actor.setFlag("midi-qol", "advantage.attack.mwak", false);
-		//         }
-		//         console.log(`${moduleTag} | Flanking condition Removed.`);
-		//     }
-		// }
 	}
 }
 
