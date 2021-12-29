@@ -237,7 +237,6 @@ class FlankingGrid {
 	 * @returns {Boolean}
 	 */
 	_isFlanker(a, target, t, reqPos, aBB) {
-		console.log(t.data.name);
 		const attackerSize = a.height;
 		const tokenSize = t.data.height;
 		const tLoc = {
@@ -318,7 +317,6 @@ class FlankingGrid {
 		if (size > 1) {
 			tLoc.x = (tLoc.x + (hitSize - canvas.grid.size) + tLoc.x) * 0.5;
 			tLoc.y = (tLoc.y + (hitSize - canvas.grid.size) + tLoc.y) * 0.5;
-			console.log('Modified size');
 		}
 
 		return tLoc;
