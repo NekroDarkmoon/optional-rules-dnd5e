@@ -14,20 +14,11 @@ export class TokenChar {
 		this.size = this.fetchSize();
 		this.height = this.fetchHeight(); //Integer representation of size in grid count.
 		this.location = this.calcLocation();
+		this.validPos = this.calcLocation();
 	}
 
 	adjustLocationGrid() {
 		if (this.size > this.gridSize) {
-			// this.location = {
-			// 	x:
-			// 		(this.location.x + (this.size - this.gridSize) + this.location.x) *
-			// 		0.5,
-			// 	y:
-			// 		(this.location.y + (this.size - this.gridSize) + this.location.y) *
-			// 		0.5,
-			// 	z: this.data.data.elevation,
-			// };
-
 			this.location = {
 				x: this.location.x + (this.size - this.gridSize) * 0.5,
 				y: this.location.y + (this.size - this.gridSize) * 0.5,
@@ -39,7 +30,7 @@ export class TokenChar {
 	adjustLocationHex() {}
 
 	calcLocation() {
-		const location = this.data._validPosition;
+		const location = JSON.parse(JSON.stringify(this.data._validPosition));
 		location.z = this.data.data.elevation;
 		return location;
 	}

@@ -110,10 +110,9 @@ class FlankingGrid {
 		if (attacker.disposition === target.disposition) return false;
 
 		// Check if adjacent
-		if (!this.isAdjacent(attacker.location, target.location, target.height)) {
-			console.log('Not Adjacent');
+		if (!this.isAdjacent(attacker.location, target.location, attacker.height))
 			return false;
-		}
+
 		// Adjust Attacker and Target size
 		attacker.adjustLocationGrid();
 		target.adjustLocationGrid();
@@ -137,11 +136,11 @@ class FlankingGrid {
 	 *
 	 * @returns {boolean}
 	 */
-	isAdjacent(attacker, target, tHeight) {
+	isAdjacent(attacker, target, aHeight) {
 		let gridSize = canvas.grid.size;
 		if (
-			Math.abs(attacker.x - target.x) > tHeight * gridSize ||
-			Math.abs(attacker.y - target.y) > tHeight * gridSize
+			Math.abs(attacker.x - target.x) > aHeight * gridSize ||
+			Math.abs(attacker.y - target.y) > aHeight * gridSize
 		)
 			return false;
 
@@ -162,7 +161,6 @@ class FlankingGrid {
 		console.log(attacker);
 		// Create bounding box for attacker if size greater than medium
 		const expandCoeff = (attacker.height * attacker.gridSize) / 2;
-		console.log(expandCoeff);
 		const attackerBB = {
 			x1: reqPos.x - expandCoeff,
 			x2: reqPos.x + expandCoeff,
@@ -172,9 +170,17 @@ class FlankingGrid {
 			z2: reqPos.z + expandCoeff,
 		};
 
-		console.log(attackerBB);
-
 		for (const token of tokens) {
+			// Skip Self
+			if (token.data._id === target.data.data._id) continue;
+
+			// Check if dispositions match
+			if (!(token.data.disposition === attacker.disposition)) continue;
+
+			// Check if Unconcious
+			const actor = game.actors.get(token.data.actorId);
+			if (this.isUnconscious(actor)) continue;
+
 			// Insert Comment here
 			if (!this._isFlanker(attacker, target, token, reqPos, attackerBB))
 				continue;
@@ -187,29 +193,11 @@ class FlankingGrid {
 			return true;
 		}
 
-		// for (const token of tokens) {
-		// 	// Get true center
-		// 	const tLoc = this.getTrueCenter(token);
-
-		// 	if (!(JSON.stringify(tLoc) === JSON.stringify(reqPos))) continue;
-		// 	if (!(token.data.disposition === attacker.disposition)) continue;
-
-		// 	// Check if Unconcious
-		// 	const actor = game.actors.get(token.data.actorId);
-		// 	if (this.isUnconscious(actor)) return false;
-
-		// 	await ChatMessage.create({
-		// 		speaker: { alias: 'Optional Rules' },
-		// 		content: `${attacker.data.name} & ${token.data.name} are flanking ${target.data.name}`,
-		// 	});
-
-		// 	return true;
-		// }
-
 		return false;
 	}
 
 	_isFlanker(a, target, t, reqPos, aBB) {
+		console.log(t.data.name);
 		const attackerSize = a.height;
 		const tokenSize = t.data.height;
 		const tLoc = {
@@ -218,27 +206,55 @@ class FlankingGrid {
 			z: t.data.elevation,
 		};
 
+		if (!this.isAdjacent(this.getTrueCenter(t), target.location, tokenSize))
+			return false;
+
 		if (attackerSize === tokenSize) {
-			return JSON.stringify(tLoc) === JSON.stringify(reqPos);
+			if (tokenSize > 1)
+				return JSON.stringify(this.getTrueCenter(t)) === JSON.stringify(reqPos);
+			else return JSON.stringify(tLoc) === JSON.stringify(reqPos);
 		}
 
 		if (attackerSize > tokenSize) {
-			// Check if target in attackers bb
-			const sizeDiff = (attackerSize - tokenSize) * a.gridSize;
-			console.log(sizeDiff);
+			// Construct token rectangle
+			const tBB = { x1: tLoc.x, y1: tLoc.y, z1: tLoc.z };
+			tBB.x2 = tBB.x1 + (tokenSize - 1) * a.gridSize;
+			tBB.y2 = tBB.y1 + (tokenSize - 1) * a.gridSize;
+			tBB.z2 = tBB.z1 + (tokenSize - 1) * a.gridSize;
+
+			// Check if tBB is inside aBB
 			if (
-				tLoc.x >= aBB.x1 &&
-				tLoc.x <= aBB.x2 &&
-				tLoc.y >= aBB.y1 &&
-				tLoc.y <= aBB.y2 &&
-				tLoc.z >= aBB.z1 &&
-				tLoc.z <= aBB.z2
+				tBB.x1 >= aBB.x1 &&
+				tBB.x2 <= aBB.x2 &&
+				tBB.y1 >= aBB.y1 &&
+				tBB.y2 <= tBB.y2 //&&
+				// tBB.z1 >= aBB.z1 &&
+				// tBB.z2 <= aBB.z2
 			)
-				return this.isAdjacent(target.location, tLoc);
-			else return false;
+				return true;
+
+			return false;
 		}
 
-		// If friendly is bigger
+		if (tokenSize > attackerSize) {
+			// Construct token rectangle
+			const tBB = { x1: tLoc.x, y1: tLoc.y, z1: tLoc.z };
+			tBB.x2 = tBB.x1 + (tokenSize - 1) * a.gridSize;
+			tBB.y2 = tBB.y1 + (tokenSize - 1) * a.gridSize;
+			tBB.z2 = tBB.z1 + (tokenSize - 1) * a.gridSize;
+
+			// Check if req Pos in token rectangle
+			if (
+				reqPos.x >= tBB.x1 &&
+				reqPos.x <= tBB.x2 &&
+				reqPos.y >= tBB.y1 &&
+				reqPos.y <= tBB.y2
+			)
+				return true;
+
+			return false;
+		}
+
 		return false;
 	}
 
