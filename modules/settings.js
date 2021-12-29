@@ -42,7 +42,7 @@ class ORDnD5e extends FormApplication {
 						name: 'Critical Hit and Fumble Rules',
 						hint: 'Use the critical hit and fumble rules found in the DMG.',
 						id: 'useCritHitFumble',
-						value: game.settings.get(moduleName, 'use-crit-hit-fumble'),
+						value: game.settings.get(moduleName, 'useCritHitFumble'),
 						isCheckbox: true,
 						client: game.user.isGM,
 					},
@@ -51,7 +51,7 @@ class ORDnD5e extends FormApplication {
 						name: 'Critical Fumble Threshold',
 						hint: 'Change the triggering threshold for the rolltable roll. (Default is set to 5).',
 						id: 'critFumbleThreshold',
-						value: game.settings.get(moduleName, 'crit-fumble-threshold'),
+						value: game.settings.get(moduleName, 'critFumbleThreshold'),
 						isRange: true,
 						range: { min: 1, max: 6 },
 						client: game.user.isGM,
@@ -61,24 +61,24 @@ class ORDnD5e extends FormApplication {
 						name: 'Hide Critical Hit/Fumble Card',
 						hint: 'Choose whether to hide critical hit/fumble card',
 						id: 'critHitHidden',
-						value: game.settings.get(moduleName, 'crit-hit-hidden'),
+						value: game.settings.get(moduleName, 'critHitHidden'),
 						isCheckbox: true,
 						client: game.user.isGM,
 					},
 
-					critHitRolltable: {
+					mainCritRollTable: {
 						name: 'Critical Hit Rolltable',
 						hint: 'Rolltable for Critical Hit',
 						id: 'critHitRolltable',
-						value: game.settings.get(moduleName, 'crit-hit-rolltable'),
+						value: game.settings.get(moduleName, 'mainCritRolltable'),
 						client: game.user.isGM,
 					},
 
-					critFumbleRolltable: {
+					mainFumbleRollTable: {
 						name: 'Critical Fumble Rolltable',
 						hint: 'Rolltable for Critical Fumble',
 						id: 'critFumbleRolltable',
-						value: game.settings.get(moduleName, 'crit-fumble-rolltable'),
+						value: game.settings.get(moduleName, 'mainFumbleRolltable'),
 						client: game.user.isGM,
 					},
 				},
@@ -88,8 +88,8 @@ class ORDnD5e extends FormApplication {
 					useFlanking: {
 						name: 'Enable Flanking Automation',
 						hint: 'Enable Automation for the optional flanking rules found in the DMG.',
-						id: 'use-flanking',
-						value: game.settings.get(moduleName, 'use-flanking'),
+						id: 'useFlanking',
+						value: game.settings.get(moduleName, 'useFlanking'),
 						isCheckbox: true,
 						client: game.user.isGM,
 					},
@@ -106,8 +106,8 @@ class ORDnD5e extends FormApplication {
 					useFlankingMod: {
 						name: 'Variant Rule - Use Modifiers',
 						hint: 'Use modifiers instead of giving advantage when flanking.',
-						id: 'use-flanking-mod',
-						value: game.settings.get(moduleName, 'use-flanking-mod'),
+						id: 'useFlankingMod',
+						value: game.settings.get(moduleName, 'useFlankingMod'),
 						isCheckbox: true,
 						client: game.user.isGM,
 					},
@@ -115,8 +115,8 @@ class ORDnD5e extends FormApplication {
 					flankingMod: {
 						name: 'Flanking Modifier',
 						hint: 'Modifier to use when using the Variant Rule - Use Modifiers. Default is set to 2',
-						id: 'flanking-mod',
-						value: game.settings.get(moduleName, 'flanking-mod'),
+						id: 'flankingMod',
+						value: game.settings.get(moduleName, 'flankingMod'),
 						isNumber: true,
 						client: game.user.isGM,
 					},
@@ -145,8 +145,8 @@ class ORDnD5e extends FormApplication {
 					useHeroPoints: {
 						name: 'Enable Hero Points Automation',
 						hint: 'Enable Automation for tracking and rolling hero points based on the optional rules from the DMG.',
-						id: 'use-hero-points',
-						value: game.settings.get(moduleName, 'use-hero-points'),
+						id: 'useHeroPoints',
+						value: game.settings.get(moduleName, 'useHeroPoints'),
 						isCheckbox: true,
 						client: game.user.isGM,
 					},
@@ -265,7 +265,7 @@ export const RegisterSettings = async function () {
 		default: false,
 	});
 
-	await game.settings.register(moduleName, 'critHitRolltable', {
+	await game.settings.register(moduleName, 'mainHitRolltable', {
 		name: 'Critical hit rolltable',
 		scope: 'world',
 		config: false,
@@ -273,7 +273,7 @@ export const RegisterSettings = async function () {
 		onChange: tableExists,
 	});
 
-	await game.settings.register(moduleName, 'critFumbleRolltable', {
+	await game.settings.register(moduleName, 'mainFumbleRolltable', {
 		name: 'Critical fumble rolltable',
 		scope: 'world',
 		config: false,
@@ -282,7 +282,7 @@ export const RegisterSettings = async function () {
 	});
 
 	// Settings for Flanking
-	await game.settings.register(moduleName, 'use-flanking', {
+	await game.settings.register(moduleName, 'useFlanking', {
 		name: 'Use Flanking',
 		scope: 'world',
 		config: false,
@@ -290,7 +290,7 @@ export const RegisterSettings = async function () {
 		onChange: debounceReload,
 	});
 
-	await game.settings.register(moduleName, 'use-flanking-mod', {
+	await game.settings.register(moduleName, 'useFlankingMod', {
 		name: 'Use Modifiers instead of Adv/Dis for flanking',
 		scope: 'world',
 		config: false,
@@ -299,7 +299,7 @@ export const RegisterSettings = async function () {
 		onChange: debounceReload,
 	});
 
-	await game.settings.register(moduleName, 'flanking-mod', {
+	await game.settings.register(moduleName, 'flankingMod', {
 		name: 'Modifier to use when flanking',
 		scope: 'world',
 		config: false,
@@ -333,7 +333,7 @@ export const RegisterSettings = async function () {
 	});
 
 	// Settings for Hero Points
-	await game.settings.register(moduleName, 'use-hero-points', {
+	await game.settings.register(moduleName, 'useHeroPoints', {
 		name: 'Use Hero Points',
 		scope: 'world',
 		config: false,
@@ -341,7 +341,7 @@ export const RegisterSettings = async function () {
 		onChange: debounceReload,
 	});
 
-	await game.settings.register(moduleName, 'hero-points-data', {
+	await game.settings.register(moduleName, 'heroPointsData', {
 		name: 'Hero Points Data',
 		scope: 'world',
 		config: false,
@@ -349,7 +349,7 @@ export const RegisterSettings = async function () {
 		default: null,
 	});
 
-	await game.settings.register(moduleName, 'hero-points-lastSet', {
+	await game.settings.register(moduleName, 'heroPointsLastSet', {
 		name: 'Hero Points Last Set',
 		scope: 'world',
 		config: false,

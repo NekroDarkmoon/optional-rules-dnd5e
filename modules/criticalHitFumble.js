@@ -3,6 +3,15 @@
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 import { moduleName, moduleTag } from './constants.js';
 
+/**
+ * @typedef {Object} CritHitSettings
+ * @property {Boolean} hidden
+ * @property {Number} threshold
+ */
+
+/**@type {CritHitSettings}*/
+const SETTINGS = {};
+
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //                             Initilization Function
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -10,6 +19,15 @@ import { moduleName, moduleTag } from './constants.js';
  *
  */
 export const CritHitFumble = async function () {
+	// Populate Settings
+	SETTINGS.hidden = game.settings.get(moduleName, 'critHitHidden');
+	SETTINGS.threshold = game.settings.get(moduleName, 'critFumbleThreshhold');
+	SETTINGS.mainHitTable = game.settings.get(moduleName, 'mainCritRollTable');
+	SETTINGS.mainFumbleTable = game.settings.get(
+		moduleName,
+		'mainFumbleRollTable'
+	);
+
 	Hooks.on('midi-qol.AttackRollComplete', async midiData => {
 		//  Check if critcal
 		if (midiData.isCritical) {

@@ -26,7 +26,7 @@ export async function attackRoll(wrapped, options) {
 export function getAttackToHit(wrapped) {
 	// Flanking
 	let original = wrapped();
-	let mod = game.settings.get(moduleName, 'flanking-mod');
+	let mod = game.settings.get(moduleName, 'flankingMod');
 
 	if (this == null) return wrapped();
 	if (original == null) return wrapped();

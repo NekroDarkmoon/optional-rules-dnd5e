@@ -15,8 +15,8 @@ export const heroPoints = async function () {
 	}
 
 	// Hero points redundacy storage
-	let existingHp = game.settings.get(moduleName, 'hero-points-data');
-	let lastLevel = game.settings.get(moduleName, 'hero-points-lastSet');
+	let existingHp = game.settings.get(moduleName, 'heroPointsData');
+	let lastLevel = game.settings.get(moduleName, 'heroPointsLastSet');
 
 	var HeroPoints;
 	var updatedAt;
@@ -76,8 +76,8 @@ export const heroPoints = async function () {
 	}
 
 	// Sync back to settings
-	game.settings.set(moduleName, 'hero-points-data', HeroPoints);
-	game.settings.set(moduleName, 'hero-points-lastSet', updatedAt);
+	game.settings.set(moduleName, 'heroPointsData', HeroPoints);
+	game.settings.set(moduleName, 'heroPointsLastSet', updatedAt);
 
 	console.log(`${moduleTag} | HeroPoints initialized.`);
 	console.info(HeroPoints);
@@ -103,7 +103,7 @@ export const heroPoints = async function () {
 			return;
 		}
 
-		let stored = game.settings.get(moduleName, 'hero-points-data');
+		let stored = game.settings.get(moduleName, 'heroPointsData');
 
 		let actor = game.actors.get(args[1]._id);
 		let oldHP = stored[actor.data.name];
