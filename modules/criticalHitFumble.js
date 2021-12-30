@@ -22,11 +22,26 @@ const SETTINGS = {};
 //                            	Populate Settings
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 function populateSettings() {
+	// Get Tables
+	const mainCritTable = game.settings.get(moduleName, 'mainCritTable');
+	const mainFumbleTable = game.settings.get(moduleName, 'mainFumbleTable');
+	const meleeCritTable = game.settings.get(moduleName, 'meleeCritTable');
+	const meleeFumbleTable = game.settings.get(moduleName, 'meleeFumbleTable');
+	const spellCritTable = game.settings.get(moduleName, 'spellCritTable');
+	const spellFumbleTable = game.settings.get(moduleName, 'spellFumbleTable');
+
 	// Populate Settings
 	SETTINGS.hidden = game.settings.get(moduleName, 'critHitHidden');
 	SETTINGS.threshold = game.settings.get(moduleName, 'critFumbleThreshold');
-	SETTINGS.mainCritTable = game.settings.get(moduleName, 'mainCritTable');
-	SETTINGS.mainFumbleTable = game.settings.get(moduleName, 'mainFumbleTable');
+	SETTINGS.mainCritTable = mainCritTable === 'null' ? null : mainCritTable;
+	SETTINGS.mainFumbleTable =
+		mainFumbleTable === 'null' ? null : mainFumbleTable;
+	SETTINGS.meleeCritTable = meleeCritTable === 'null' ? null : meleeCritTable;
+	SETTINGS.meleeFumbleTable =
+		meleeFumbleTable === 'null' ? null : meleeFumbleTable;
+	SETTINGS.spellCritTable = spellCritTable === 'null' ? null : spellCritTable;
+	SETTINGS.spellFumbleTable =
+		spellFumbleTable === 'null' ? null : spellFumbleTable;
 }
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -41,12 +56,15 @@ export const CritHitFumble = async function () {
 	Hooks.on('ordnd5e.rollTableUpdate', (...args) => {
 		populateSettings();
 		console.info(`${moduleTag} | Updated Crit Hit & Fumble Settings`);
+		return true;
 	});
 
 	// Register Attack Hook
 	Hooks.on('Item5e.rollAttack', (item, result, options, actor) => {
 		_handleRoll(item, result);
 	});
+
+	console.log(SETTINGS);
 };
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -61,15 +79,13 @@ export const CritHitFumble = async function () {
 async function _handleRoll(item, result) {
 	// Check if critical or fumble
 	const { isCrit, isFumble } = _isCritOrFumble(result);
-	console.log(isCrit, isFumble);
 	if (!isCrit && !isFumble) return;
 
 	// Check if weapon or spell
-	console.log(item);
 	const type = item.data.type;
 
 	// Roll threshold die
-	const thresholdRoll = await new Roll('1d6').roll();
+	const thresholdRoll = await new Roll('1d6').roll({ async: true });
 	await thresholdRoll.toMessage();
 
 	if (thresholdRoll.total <= SETTINGS.threshold) return;
@@ -101,7 +117,6 @@ function _isCritOrFumble(roll) {
 	const fumbleDef = roll.options.fumble || 1;
 
 	// Check if d20 matches either
-	console.log(d20.total);
 	const isCrit = d20.total >= critDef ? true : false;
 	const isFumble = d20.total <= fumbleDef ? true : false;
 
@@ -117,23 +132,27 @@ function _isCritOrFumble(roll) {
  */
 async function _rollWeapon(isCrit, isFumble) {
 	// Set melee tables
-	const critTable =
-		SETTINGS.meleeCritTable === 'null'
-			? SETTINGS.meleeCritTable
-			: SETTINGS.mainCritTable;
+	const critTable = SETTINGS.meleeCritTable
+		? SETTINGS.meleeCritTable
+		: SETTINGS.mainCritTable;
 
-	const fumbleTable =
-		SETTINGS.meleeFumbleTable === 'null'
-			? SETTINGS.meleeFumbleTable
-			: SETTINGS.mainFumbleTable;
+	const fumbleTable = SETTINGS.meleeFumbleTable
+		? SETTINGS.meleeFumbleTable
+		: SETTINGS.mainFumbleTable;
 
+	console.log(critTable);
 	// Get table
 	let table = null;
 	if (isCrit) table = game.tables.getName(critTable);
 	else table = game.tables.getName(fumbleTable);
 
-	await table.draw({
-		rollMode: CONFIG.Dice.rollModes.blindroll,
+	if (!table) return;
+
+	// Set Roll Mode
+	const currentRollMode = game.settings.get('core', 'rollMode');
+
+	table.draw({
+		rollMode: SETTINGS.hidden ? CONST.DICE_ROLL_MODES.BLIND : currentRollMode,
 	});
 }
 
@@ -142,23 +161,26 @@ async function _rollWeapon(isCrit, isFumble) {
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 async function _rollSpell(isCrit, isFumble) {
 	// Set melee tables
-	const critTable =
-		SETTINGS.spellCritTable === 'null'
-			? SETTINGS.spellCritTable
-			: SETTINGS.mainCritTable;
+	const critTable = SETTINGS.spellCritTable
+		? SETTINGS.spellCritTable
+		: SETTINGS.mainCritTable;
 
-	const fumbleTable =
-		SETTINGS.spellFumbleTable === 'null'
-			? SETTINGS.spellFumbleTable
-			: SETTINGS.mainFumbleTable;
+	const fumbleTable = SETTINGS.spellFumbleTable
+		? SETTINGS.spellFumbleTable
+		: SETTINGS.mainFumbleTable;
 
 	// Get table
 	let table = null;
 	if (isCrit) table = game.tables.getName(critTable);
 	else table = game.tables.getName(fumbleTable);
 
-	await table.draw({
-		rollMode: CONFIG.Dice.rollModes.blindroll,
+	if (!table) return;
+
+	// Set Roll Mode
+	const currentRollMode = game.settings.get('core', 'rollMode');
+
+	table.draw({
+		rollMode: SETTINGS.hidden ? CONST.DICE_ROLL_MODES.BLIND : currentRollMode,
 	});
 }
 

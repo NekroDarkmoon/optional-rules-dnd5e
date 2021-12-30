@@ -87,7 +87,7 @@ class ORDnD5e extends FormApplication {
 					},
 
 					meleeCritTable: {
-						name: 'Melee Critical Fumble Rolltable',
+						name: 'Melee Critical Hit Rolltable',
 						hint: 'Rolltable for Melee Critical Hits. [Overrides main table if set]',
 						id: 'meleeCritTable',
 						value: game.settings.get(moduleName, 'meleeCritTable'),
@@ -117,7 +117,7 @@ class ORDnD5e extends FormApplication {
 					},
 
 					spellFumbleTable: {
-						name: 'Spell Critical Hit Rolltable',
+						name: 'Spell Critical Fumble Rolltable',
 						hint: 'Rolltable for Spell Critical Fumbles. [Overrides main table if set]',
 						id: 'spellFumbleTable',
 						value: game.settings.get(moduleName, 'spellFumbleTable'),
@@ -299,7 +299,7 @@ export const RegisterSettings = async function () {
 		scope: 'world',
 		config: false,
 		type: Number,
-		default: 5,
+		default: 1,
 		onChange: debounceReload,
 	});
 
