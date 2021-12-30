@@ -48,7 +48,7 @@ Some of the optional rules depend on other modules. While it is not required to 
 ### Flanking
 
 ![](/imgs/FlankingChat.png)
-![](/img/FlankingTarget.png)
+![](/imgs/FlankingTarget.png)
 
 #### Settings
 
