@@ -35,11 +35,12 @@ class ORDnD5e extends FormApplication {
 	 */
 	getData(options = {}) {
 		const data = {
+			isGm: game.user.isGM,
 			settings: {
 				// Settings for Critical Hit and Fumble Rules
 				critHitFumble: {
 					useCritHitFumble: {
-						name: 'Critical Hit and Fumble Rules',
+						name: 'Enable Critical / Fumble Rules',
 						hint: 'Use the critical hit and fumble rules found in the DMG.',
 						id: 'useCritHitFumble',
 						value: game.settings.get(moduleName, 'useCritHitFumble'),
@@ -198,7 +199,6 @@ class ORDnD5e extends FormApplication {
 			},
 		};
 
-		data.isGM = game.user.isGM;
 		return data;
 	}
 
@@ -310,6 +310,7 @@ export const RegisterSettings = async function () {
 		config: false,
 		type: Boolean,
 		default: false,
+		onChange: debounceReload,
 	});
 
 	await game.settings.register(moduleName, 'mainCritTable', {
