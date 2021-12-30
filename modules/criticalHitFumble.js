@@ -24,7 +24,7 @@ const SETTINGS = {};
 function populateSettings() {
 	// Populate Settings
 	SETTINGS.hidden = game.settings.get(moduleName, 'critHitHidden');
-	SETTINGS.threshold = game.settings.get(moduleName, 'critFumbleThreshhold');
+	SETTINGS.threshold = game.settings.get(moduleName, 'critFumbleThreshold');
 	SETTINGS.mainCritTable = game.settings.get(moduleName, 'mainCritTable');
 	SETTINGS.mainFumbleTable = game.settings.get(moduleName, 'mainFumbleTable');
 }
@@ -38,27 +38,84 @@ function populateSettings() {
 export const CritHitFumble = async function () {
 	// Populate settings initially and then repopulate everytime table changes.
 	populateSettings();
-	Hooks.on('ordnd5e-rollTableUpdate', (...args) => {
+	Hooks.on('ordnd5e.rollTableUpdate', (...args) => {
 		populateSettings();
 		console.info(`${moduleTag} | Updated Crit Hit & Fumble Settings`);
 	});
 
-	// Register Crit Hooks
-	// Register Fumble Hooks
-
-	Hooks.on('midi-qol.AttackRollComplete', async midiData => {
-		//  Check if critcal
-		if (midiData.isCritical) {
-			console.log('Critical Hit!');
-			await critFumbleRoll('Crit');
-		}
-		// Check if fumble
-		if (midiData.isFumble) {
-			console.log('Critical Faliure!');
-			await critFumbleRoll('Fumble');
-		}
+	// Register Attack Hook
+	Hooks.on('Item5e.rollAttack', (item, result, options, actor) => {
+		_handleRoll(item, result);
 	});
 };
+
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//                                 	Handle Roll
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/**
+ *
+ * @param {Object} item
+ * @param {Object} result
+ * @private
+ */
+async function _handleRoll(item, result) {
+	// Check if critical or fumble
+	const { isCrit, isFumble } = _isCritOrFumble(result);
+	console.log(isCrit, isFumble);
+	if (!isCrit && !isFumble) return;
+
+	// Check if weapon or spell
+	console.log(item);
+	const type = item.data.type;
+	if (type === 'weapon') return _rollWeapon(isCrit, isFumble);
+	if (type === 'spell ') return _rollSpell(isCrit, isFumble);
+}
+
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//                                 	Handle Roll
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/**
+ *
+ * @param {Object} roll
+ * @returns {Object<Boolean>}
+ * @private
+ */
+function _isCritOrFumble(roll) {
+	// Get dice
+	if (!roll.dice.length) return null;
+	const d20 = roll.dice[0];
+
+	// Ensure is d20
+	const isD20 = d20.faces === 20 && d20.values.length === 1;
+	if (!isD20) return null;
+
+	// Get crit and fumble defaults
+	const critDef = roll.options.critical || 20;
+	const fumbleDef = roll.options.fumble || 1;
+
+	// Check if d20 matches either
+	console.log(d20.total);
+	const isCrit = d20.total >= critDef ? true : false;
+	const isFumble = d20.total <= fumbleDef ? true : false;
+
+	return { isCrit, isFumble };
+}
+
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//                                 		Melee Roll
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/**
+ * @param {Boolean} isCrit
+ * @param {Boolean} isFumble
+ */
+async function _rollWeapon(isCrit, isFumble) {
+	// Check
+}
+
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//                                 		Spell Roll
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+async function _rollSpell(isCrit, isFumble) {}
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //                                 Crit Fumble Roll

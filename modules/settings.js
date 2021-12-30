@@ -70,7 +70,7 @@ class ORDnD5e extends FormApplication {
 						name: 'Main Critical Hit Rolltable',
 						hint: 'Main Rolltable for Critical Hit.',
 						id: 'mainCritTable',
-						value: game.settings.get(moduleName, 'mainCritRolltable'),
+						value: game.settings.get(moduleName, 'mainCritTable'),
 						client: game.user.isGM,
 					},
 
@@ -229,7 +229,7 @@ const tableExists = function (tableName) {
 		return;
 	}
 
-	Hooks.call('ordnd5e-rollTableUpdate', []);
+	Hooks.call('ordnd5e.rollTableUpdate', []);
 };
 
 const flankCreatureMap = async function (choice) {
