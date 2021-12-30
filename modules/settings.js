@@ -95,7 +95,7 @@ class ORDnD5e extends FormApplication {
 					meleeFumbleTable: {
 						name: 'Melee Critical Fumble Rolltable',
 						hint: 'Rolltable for Melee Critical Fumbles. [Overrides main table if set]',
-						id: 'mainFumbleTable',
+						id: 'meleeFumbleTable',
 						value: game.settings.get(moduleName, 'meleeFumbleTable'),
 						client: game.user.isGM,
 					},
@@ -223,9 +223,9 @@ class ORDnD5e extends FormApplication {
  * @param tableName
  */
 const tableExists = function (tableName) {
-	if (tableName === '' || !tableName) return;
+	if (tableName === '' || tableName === 'null') return;
 	let rollTable = game.tables.getName(tableName);
-	if (rollTable == undefined) {
+	if (rollTable === undefined) {
 		ui.notifications.error(
 			`${moduleTag} | RollTable named ${tableName} not found.`
 		);
@@ -312,7 +312,7 @@ export const RegisterSettings = async function () {
 	});
 
 	await game.settings.register(moduleName, 'mainFumbleTable', {
-		name: 'Main Critical fumble rolltable',
+		name: 'Main Fumble rolltable',
 		scope: 'world',
 		config: false,
 		type: String,
