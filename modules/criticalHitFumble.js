@@ -125,6 +125,15 @@ async function _rollWeapon(isCrit, isFumble) {
 	const fumbleTable = SETTINGS.meleeFumbleTable
 		? SETTINGS.meleeFumbleTable
 		: SETTINGS.mainFumbleTable;
+
+	// Get table
+	let table = null;
+	if (isCrit) table = game.tables.getName(critTable);
+	else table = game.tables.getName(fumbleTable);
+
+	await table.draw({
+		rollMode: CONFIG.Dice.rollModes.blindroll,
+	});
 }
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -139,6 +148,15 @@ async function _rollSpell(isCrit, isFumble) {
 	const fumbleTable = SETTINGS.spellFumbleTable
 		? SETTINGS.spellFumbleTable
 		: SETTINGS.mainFumbleTable;
+
+	// Get table
+	let table = null;
+	if (isCrit) table = game.tables.getName(critTable);
+	else table = game.tables.getName(fumbleTable);
+
+	await table.draw({
+		rollMode: CONFIG.Dice.rollModes.blindroll,
+	});
 }
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
