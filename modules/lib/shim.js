@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // Copyright © 2021 fvtt-lib-wrapper Rui Pinheiro
 
-
 'use strict';
 
 // A shim for the libWrapper library
@@ -9,48 +8,60 @@ export let libWrapper = undefined;
 
 Hooks.once('init', () => {
 	// Check if the real module is already loaded - if so, use it
-	if(globalThis.libWrapper && !(globalThis.libWrapper.is_fallback ?? true)) {
+	if (globalThis.libWrapper && !(globalThis.libWrapper.is_fallback ?? true)) {
 		libWrapper = globalThis.libWrapper;
 		return;
 	}
 
 	// Fallback implementation
 	libWrapper = class {
-		static get is_fallback() { return true };
+		static get is_fallback() {
+			return true;
+		}
 
-		static register(module, target, fn, type="MIXED") {
+		static register(module, target, fn, type = 'MIXED') {
 			const is_setter = target.endsWith('#set');
 			target = !is_setter ? target : target.slice(0, -4);
 			const split = target.split('.');
 			const fn_name = split.pop();
-			const root_nm = split.splice(0,1)[0];
+			const root_nm = split.splice(0, 1)[0];
 			const _eval = eval; // The browser doesn't expose all global variables (e.g. 'Game') inside globalThis, but it does to an eval. We copy it to a variable to have it run in global scope.
-			const obj = split.reduce((x,y)=>x[y], globalThis[root_nm] ?? _eval(root_nm));
+			const obj = split.reduce(
+				(x, y) => x[y],
+				globalThis[root_nm] ?? _eval(root_nm)
+			);
 
 			let iObj = obj;
 			let descriptor = null;
-			while(iObj) {
+			while (iObj) {
 				descriptor = Object.getOwnPropertyDescriptor(iObj, fn_name);
-				if(descriptor) break;
+				if (descriptor) break;
 				iObj = Object.getPrototypeOf(iObj);
 			}
-			if(!descriptor) throw `libWrapper Shim: '${target}' does not exist or could not be found.`;
+			if (!descriptor)
+				throw `libWrapper Shim: '${target}' does not exist or could not be found.`;
 
 			let original = null;
-			const wrapper = (type == 'OVERRIDE') ? function() { return fn.call(this, ...arguments); } : function() { return fn.call(this, original.bind(this), ...arguments); }
+			const wrapper =
+				type == 'OVERRIDE'
+					? function () {
+							return fn.call(this, ...arguments);
+					  }
+					: function () {
+							return fn.call(this, original.bind(this), ...arguments);
+					  };
 
-			if(!is_setter) {
-				if(descriptor.value) {
+			if (!is_setter) {
+				if (descriptor.value) {
 					original = descriptor.value;
 					descriptor.value = wrapper;
-				}
-				else {
+				} else {
 					original = descriptor.get;
 					descriptor.get = wrapper;
 				}
-			}
-			else {
-				if(!descriptor.set) throw `libWrapper Shim: '${target}' does not have a setter`;
+			} else {
+				if (!descriptor.set)
+					throw `libWrapper Shim: '${target}' does not have a setter`;
 				original = descriptor.set;
 				descriptor.set = wrapper;
 			}
@@ -58,19 +69,21 @@ Hooks.once('init', () => {
 			descriptor.configurable = true;
 			Object.defineProperty(obj, fn_name, descriptor);
 		}
-	}
+	};
 
 	//************** USER CUSTOMIZABLE:
 	// Whether to warn GM that the fallback is being used
 	const WARN_FALLBACK = true;
 
 	// Set up the ready hook that shows the "libWrapper not installed" warning dialog
-	if(WARN_FALLBACK) {
+	if (WARN_FALLBACK) {
 		//************** USER CUSTOMIZABLE:
 		// Module ID - by default attempts to auto-detect, but you might want to hardcode your module ID here to avoid potential auto-detect issues
-		const MODULE_ID = "midi-qol";
-		if(!MODULE_ID) {
-			console.error("libWrapper Shim: Could not auto-detect module ID. The libWrapper fallback warning dialog will be disabled.");
+		const MODULE_ID = 'midi-qol';
+		if (!MODULE_ID) {
+			console.error(
+				'libWrapper Shim: Could not auto-detect module ID. The libWrapper fallback warning dialog will be disabled.'
+			);
 			return;
 		}
 
@@ -89,18 +102,35 @@ Hooks.once('init', () => {
 			`;
 
 			// Settings key used for the "Don't remind me again" setting
-			const DONT_REMIND_AGAIN_KEY = "libwrapper-dont-remind-again";
+			const DONT_REMIND_AGAIN_KEY = 'libwrapper-dont-remind-again';
 
 			// Dialog code
-			console.warn(`${MODULE_TITLE}: libWrapper not present, using fallback implementation.`);
-			game.settings.register(MODULE_ID, DONT_REMIND_AGAIN_KEY, { name: '', default: false, type: Boolean, scope: 'world', config: false });
-			if(game.user.isGM && !game.settings.get(MODULE_ID, DONT_REMIND_AGAIN_KEY)) {
+			console.warn(
+				`${MODULE_TITLE}: libWrapper not present, using fallback implementation.`
+			);
+			game.settings.register(MODULE_ID, DONT_REMIND_AGAIN_KEY, {
+				name: '',
+				default: false,
+				type: Boolean,
+				scope: 'world',
+				config: false,
+			});
+			if (
+				game.user.isGM &&
+				!game.settings.get(MODULE_ID, DONT_REMIND_AGAIN_KEY)
+			) {
 				new Dialog({
 					title: FALLBACK_MESSAGE_TITLE,
-					content: FALLBACK_MESSAGE, buttons: {
+					content: FALLBACK_MESSAGE,
+					buttons: {
 						ok: { icon: '<i class="fas fa-check"></i>', label: 'Understood' },
-						dont_remind: { icon: '<i class="fas fa-times"></i>', label: "Don't remind me again", callback: () => game.settings.set(MODULE_ID, DONT_REMIND_AGAIN_KEY, true) }
-					}
+						dont_remind: {
+							icon: '<i class="fas fa-times"></i>',
+							label: "Don't remind me again",
+							callback: () =>
+								game.settings.set(MODULE_ID, DONT_REMIND_AGAIN_KEY, true),
+						},
+					},
 				}).render(true);
 			}
 		});
