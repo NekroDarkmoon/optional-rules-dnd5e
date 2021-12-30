@@ -233,7 +233,8 @@ class ORDnD5e extends FormApplication {
  * @param tableName
  */
 const tableExists = function (tableName) {
-	if (tableName === '' || tableName === 'null') return;
+	Hooks.call('ordnd5e.rollTableUpdate', []);
+	if (!tableName || tableName === '' || tableName === 'null') return;
 	let rollTable = game.tables.getName(tableName);
 	if (rollTable === undefined) {
 		ui.notifications.error(
@@ -241,8 +242,6 @@ const tableExists = function (tableName) {
 		);
 		return;
 	}
-
-	Hooks.call('ordnd5e.rollTableUpdate', []);
 };
 
 const flankCreatureMap = async function (choice) {

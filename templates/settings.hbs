@@ -22,7 +22,7 @@
 					<input type="number" name="{{this.id}}" data-dtype="{{this.type}}" value="{{this.value}}" />
 
 				{{else if this.isTable}}
-					<input list="{{this.id}}" name="{{this.id}}" data-dtype="{{this.type}}" placeholder="{{this.value}}" />
+					<input type="text" list="{{this.id}}" name="{{this.id}}" data-dtype="{{this.type}}" placeholder="{{this.value}}" />
 					<datalist id="{{this.id}}">
 						{{#each this.choices}}						
 						<option value="{{this.name}}"></option>

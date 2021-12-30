@@ -67,7 +67,6 @@ async function _handleRoll(item, result) {
 	// Check if weapon or spell
 	console.log(item);
 	const type = item.data.type;
-	let tableRoll = null;
 
 	// Roll threshold die
 	const thresholdRoll = await new Roll('1d6').roll();
@@ -76,7 +75,7 @@ async function _handleRoll(item, result) {
 	if (thresholdRoll.total <= SETTINGS.threshold) return;
 
 	if (type === 'weapon') return _rollWeapon(isCrit, isFumble);
-	if (type === 'spell ') return _rollSpell(isCrit, isFumble);
+	if (type === 'spell') return _rollSpell(isCrit, isFumble);
 }
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -118,13 +117,15 @@ function _isCritOrFumble(roll) {
  */
 async function _rollWeapon(isCrit, isFumble) {
 	// Set melee tables
-	const critTable = SETTINGS.meleeCritTable
-		? SETTINGS.meleeCritTable
-		: SETTINGS.mainCritTable;
+	const critTable =
+		SETTINGS.meleeCritTable === 'null'
+			? SETTINGS.meleeCritTable
+			: SETTINGS.mainCritTable;
 
-	const fumbleTable = SETTINGS.meleeFumbleTable
-		? SETTINGS.meleeFumbleTable
-		: SETTINGS.mainFumbleTable;
+	const fumbleTable =
+		SETTINGS.meleeFumbleTable === 'null'
+			? SETTINGS.meleeFumbleTable
+			: SETTINGS.mainFumbleTable;
 
 	// Get table
 	let table = null;
@@ -141,13 +142,15 @@ async function _rollWeapon(isCrit, isFumble) {
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 async function _rollSpell(isCrit, isFumble) {
 	// Set melee tables
-	const critTable = SETTINGS.spellCritTable
-		? SETTINGS.spellCritTable
-		: SETTINGS.mainCritTable;
+	const critTable =
+		SETTINGS.spellCritTable === 'null'
+			? SETTINGS.spellCritTable
+			: SETTINGS.mainCritTable;
 
-	const fumbleTable = SETTINGS.spellFumbleTable
-		? SETTINGS.spellFumbleTable
-		: SETTINGS.mainFumbleTable;
+	const fumbleTable =
+		SETTINGS.spellFumbleTable === 'null'
+			? SETTINGS.spellFumbleTable
+			: SETTINGS.mainFumbleTable;
 
 	// Get table
 	let table = null;
