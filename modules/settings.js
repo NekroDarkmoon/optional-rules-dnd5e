@@ -40,7 +40,7 @@ class ORDnD5e extends FormApplication {
 				// Settings for Critical Hit and Fumble Rules
 				critHitFumble: {
 					useCritHitFumble: {
-						name: 'Enable Critical / Fumble Rules',
+						name: 'Enable Critical/Fumble Rules',
 						hint: 'Use the critical hit and fumble rules found in the DMG.',
 						id: 'useCritHitFumble',
 						value: game.settings.get(moduleName, 'useCritHitFumble'),
@@ -50,7 +50,7 @@ class ORDnD5e extends FormApplication {
 
 					critHitThreshold: {
 						name: 'Critical Fumble Threshold',
-						hint: 'Change the triggering threshold for the rolltable roll. (Default is set to 5).',
+						hint: 'Change the triggering threshold for the rolltable roll. (Default is set to 1).',
 						id: 'critFumbleThreshold',
 						value: game.settings.get(moduleName, 'critFumbleThreshold'),
 						isRange: true,
