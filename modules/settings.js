@@ -82,6 +82,8 @@ class ORDnD5e extends FormApplication {
 						id: 'mainFumbleTable',
 						value: game.settings.get(moduleName, 'mainFumbleTable'),
 						client: game.user.isGM,
+						isTable: true,
+						choices: game.tables._source,
 					},
 
 					meleeCritTable: {
@@ -90,6 +92,8 @@ class ORDnD5e extends FormApplication {
 						id: 'meleeCritTable',
 						value: game.settings.get(moduleName, 'meleeCritTable'),
 						client: game.user.isGM,
+						isTable: true,
+						choices: game.tables._source,
 					},
 
 					meleeFumbleTable: {
@@ -98,6 +102,8 @@ class ORDnD5e extends FormApplication {
 						id: 'meleeFumbleTable',
 						value: game.settings.get(moduleName, 'meleeFumbleTable'),
 						client: game.user.isGM,
+						isTable: true,
+						choices: game.tables._source,
 					},
 
 					spellCritTable: {
@@ -106,6 +112,8 @@ class ORDnD5e extends FormApplication {
 						id: 'spellCritTable',
 						value: game.settings.get(moduleName, 'spellCritTable'),
 						client: game.user.isGM,
+						isTable: true,
+						choices: game.tables._source,
 					},
 
 					spellFumbleTable: {
@@ -114,6 +122,8 @@ class ORDnD5e extends FormApplication {
 						id: 'spellFumbleTable',
 						value: game.settings.get(moduleName, 'spellFumbleTable'),
 						client: game.user.isGM,
+						isTable: true,
+						choices: game.tables._source,
 					},
 				},
 
