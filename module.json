@@ -5,8 +5,8 @@
   "version": "Auto Replaced",
   "library": "false",
   "manifestPlusVersion": "1.0.0",
-  "minimumCoreVersion": "9.224",
-  "compatibleCoreVersion": "9.238",
+  "minimumCoreVersion": "9",
+  "compatibleCoreVersion": "9",
   "authors": [
     {
       "name": "NekroDarkmoon",
@@ -25,6 +25,7 @@
   "styles": [
     "/styles/module.css"
   ],
+  "system": ["dnd5e"],
   "languages": [
     {
       "lang": "en",
