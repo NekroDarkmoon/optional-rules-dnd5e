@@ -437,6 +437,16 @@ export const RegisterSettings = async function () {
 		default: null,
 	});
 
+	// Utility Settings
+	await game.settings.register(moduleName, 'outputDebug', {
+		name: 'Enable Debug Log',
+		scope: 'world',
+		config: true,
+		type: Boolean,
+		default: false,
+		onChange: debounceReload,
+	});
+
 	// Register Custom Setitng Sheet
 	game.settings.registerMenu(moduleName, 'SettingsMenu', {
 		name: 'Settings Menu',

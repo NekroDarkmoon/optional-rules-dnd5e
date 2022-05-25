@@ -187,6 +187,7 @@ class FlankingGrid {
 
 			// Check disposition match
 			if (t.data.disposition === target.disposition) continue;
+			debug('Target and Flanker not of the same disposition.');
 
 			// Check if Unconscious
 			const actor = game.actors.get(t.data.actorId);

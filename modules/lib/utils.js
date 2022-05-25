@@ -1,5 +1,5 @@
 import { moduleName, moduleTag } from '../constants.js';
-
+let debugLog;
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //                                     TokenChar
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -83,7 +83,8 @@ export class TokenChar {
 //                                     TokenChar
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 export function debug(msg) {
-	if (true) console.info(`${moduleTag} | ${msg}`);
+	if (!debugLog) debugLog = game.settings.get(moduleName, 'outputDebug');
+	if (debugLog) console.debug(`${moduleTag} | ${msg}`);
 }
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
