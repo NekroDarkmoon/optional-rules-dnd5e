@@ -139,7 +139,7 @@ class FlankingGrid {
 		debug('Target size checked');
 
 		// Check disposition
-		// if (attacker.disposition === target.disposition) return false;
+		if (attacker.disposition === target.disposition) return false;
 		debug('Target disposition checked');
 
 		// Adjust center points for calculations
@@ -186,7 +186,7 @@ class FlankingGrid {
 			if (t.data._id === attacker.data.data._id) continue;
 
 			// Check disposition match
-			if (!(t.data.disposition === attacker.disposition)) continue;
+			if (t.data.disposition === target.disposition) continue;
 
 			// Check if Unconscious
 			const actor = game.actors.get(t.data.actorId);
@@ -318,8 +318,8 @@ class FlankingGrid {
 		if (!effects) return false;
 
 		for (let i = 0; i < effects.length; i++) {
-			const effect = effects[index];
-			if (effects.label == 'Unconscious') return true;
+			const effect = effects[i];
+			if (effect.label == 'Unconscious') return true;
 		}
 
 		return false;
