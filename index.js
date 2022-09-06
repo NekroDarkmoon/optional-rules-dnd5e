@@ -49,7 +49,7 @@ Hooks.once('setup', async function () {
 
 Hooks.once('ready', async function () {
 	// Enable Hero Points
-	const { heroPoints } = await import('./modules/heroPoints.js');
+	const { heroPoints } = await import('./modules/heroPointsOld.js');
 	if (game.settings.get(moduleName, 'useHeroPoints')) {
 		heroPoints();
 		console.info(`${moduleTag} | Loaded Hero Points System.`);
