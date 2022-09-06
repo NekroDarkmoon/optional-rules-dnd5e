@@ -318,6 +318,7 @@ export const RegisterSettings = async function () {
 		scope: 'world',
 		config: false,
 		type: String,
+		default: '',
 		onChange: tableExists,
 	});
 
@@ -326,6 +327,7 @@ export const RegisterSettings = async function () {
 		scope: 'world',
 		config: false,
 		type: String,
+		default: '',
 		onChange: tableExists,
 	});
 
@@ -334,6 +336,7 @@ export const RegisterSettings = async function () {
 		scope: 'world',
 		config: false,
 		type: String,
+		default: '',
 		onChange: tableExists,
 	});
 
@@ -342,6 +345,7 @@ export const RegisterSettings = async function () {
 		scope: 'world',
 		config: false,
 		type: String,
+		default: '',
 		onChange: tableExists,
 	});
 
@@ -350,6 +354,7 @@ export const RegisterSettings = async function () {
 		scope: 'world',
 		config: false,
 		type: String,
+		default: '',
 		onChange: tableExists,
 	});
 
@@ -358,6 +363,7 @@ export const RegisterSettings = async function () {
 		scope: 'world',
 		config: false,
 		type: String,
+		default: '',
 		onChange: tableExists,
 	});
 
@@ -367,6 +373,7 @@ export const RegisterSettings = async function () {
 		scope: 'world',
 		config: false,
 		type: Boolean,
+		default: false,
 		onChange: debounceReload,
 	});
 
@@ -393,6 +400,7 @@ export const RegisterSettings = async function () {
 		scope: 'world',
 		config: false,
 		type: String,
+		default: '',
 		onChange: flankCreatureMap,
 	});
 
@@ -401,6 +409,7 @@ export const RegisterSettings = async function () {
 		scope: 'world',
 		config: false,
 		type: Number,
+		default: 1,
 		onChange: debounceReload,
 	});
 
@@ -417,6 +426,7 @@ export const RegisterSettings = async function () {
 		name: 'Use Hero Points',
 		scope: 'world',
 		config: false,
+		default: false,
 		type: Boolean,
 		onChange: debounceReload,
 	});

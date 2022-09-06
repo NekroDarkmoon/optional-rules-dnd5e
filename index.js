@@ -10,7 +10,7 @@ import { libWrapper } from './modules/lib/shim.js'; // Make libwrapper available
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 Hooks.once('init', async function () {
 	console.log(`${moduleTag} | Initializing `);
-	RegisterSettings();
+	await RegisterSettings();
 	console.info(`${moduleName} | Registered Settings`);
 	loadTemplates([`modules/${moduleName}/templates/settings.hbs`]);
 });
