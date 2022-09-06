@@ -13,7 +13,6 @@ Hooks.once('init', async function () {
 	await RegisterSettings();
 	console.info(`${moduleName} | Registered Settings`);
 	loadTemplates({
-		settings: `modules/${moduleName}/templates/settings.hbs`,
 		insertSettings: `modules/${moduleName}/templates/partials/insertSetting.hbs`,
 	});
 });
@@ -49,9 +48,9 @@ Hooks.once('setup', async function () {
 
 Hooks.once('ready', async function () {
 	// Enable Hero Points
-	const { heroPoints } = await import('./modules/heroPointsOld.js');
+	const { setupHeroPoints } = await import('./modules/heroPoints.js');
 	if (game.settings.get(moduleName, 'useHeroPoints')) {
-		heroPoints();
+		setupHeroPoints();
 		console.info(`${moduleTag} | Loaded Hero Points System.`);
 	}
 
