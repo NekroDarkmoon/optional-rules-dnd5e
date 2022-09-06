@@ -51,7 +51,7 @@ function populateSettings() {
  *
  */
 export const CritHitFumble = async function () {
-	// Populate settings initially and then repopulate everytime table changes.
+	// Populate settings initially and then repopulate every time table changes.
 	populateSettings();
 	Hooks.on('ordnd5e.rollTableUpdate', (...args) => {
 		populateSettings();
@@ -60,8 +60,8 @@ export const CritHitFumble = async function () {
 	});
 
 	// Register Attack Hook
-	Hooks.on('Item5e.rollAttack', (item, result, options, actor) => {
-		_handleRoll(item, result);
+	Hooks.on('dnd5e.rollAttack', (item, roll) => {
+		_handleRoll(item, roll);
 	});
 
 	console.log(SETTINGS);
@@ -76,13 +76,13 @@ export const CritHitFumble = async function () {
  * @param {Object} result
  * @private
  */
-async function _handleRoll(item, result) {
+async function _handleRoll(item, roll) {
 	// Check if critical or fumble
-	const { isCrit, isFumble } = _isCritOrFumble(result);
+	const { isCrit, isFumble } = _isCritOrFumble(roll);
 	if (!isCrit && !isFumble) return;
 
 	// Check if weapon or spell
-	const type = item.data.type;
+	const type = item.type;
 
 	// Roll threshold die
 	const thresholdRoll = await new Roll('1d6').roll({ async: true });

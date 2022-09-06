@@ -19,17 +19,8 @@ Hooks.once('setup', async function () {
 	// Enable Critical Hit Fumble Rules
 	if (game.settings.get(moduleName, 'useCritHitFumble')) {
 		const { CritHitFumble } = await import('./modules/criticalHitFumble.js');
-		// Perform Hook avail Check
-		if (!game.modules.get('more-hooks-5e')?.active) {
-			const msg =
-				'Critical Hit and Fumble not active - Requires "More Hooks 5e" module.';
-			ui.notifications.warn(msg);
-
-			console.warn(`${moduleTag} | ${msg}`);
-		} else {
-			CritHitFumble();
-			console.info(`${moduleTag} | Loaded Critcal Hit & Fumble System.`);
-		}
+		CritHitFumble();
+		console.info(`${moduleTag} | Loaded Critical Hit & Fumble System.`);
 	}
 
 	// Enable Flanking
