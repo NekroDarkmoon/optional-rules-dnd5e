@@ -12,7 +12,10 @@ Hooks.once('init', async function () {
 	console.log(`${moduleTag} | Initializing `);
 	await RegisterSettings();
 	console.info(`${moduleName} | Registered Settings`);
-	loadTemplates([`modules/${moduleName}/templates/settings.hbs`]);
+	loadTemplates({
+		settings: `modules/${moduleName}/templates/settings.hbs`,
+		insertSettings: `modules/${moduleName}/templates/partials/insertSetting.hbs`,
+	});
 });
 
 Hooks.once('setup', async function () {

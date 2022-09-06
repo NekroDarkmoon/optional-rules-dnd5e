@@ -1,0 +1,15 @@
+<form class="flexcol" autocomplete="off">
+  <section>
+    {{#each this.settings}}
+      {{#if this.client}}
+        {{> insertSettings }}
+      {{/if}}
+    {{/each}}
+  </section>
+
+  <footer class="sheet-footer flexrow">
+		<button type="submit" name="submit">
+			<i class="far fa-save"></i> Save
+		</button>
+	</footer>
+</form>
