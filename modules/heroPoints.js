@@ -15,7 +15,7 @@ export async function setupHeroPoints() {
 	SETTINGS.die = game.settings.get(moduleName, 'heroPointsDie');
 
 	// Get points data
-	const existingHp = await getHeroPoints();
+	const existingHp = getHeroPoints();
 	console.log(existingHp);
 
 	// Set up as tertiary resource.
@@ -26,9 +26,9 @@ export async function setupHeroPoints() {
 
 /**
  *
- * @returns {Promise<{String: Number}>} existingPoints
+ * @returns {{String: Number}} existingPoints
  */
-export async function getHeroPoints() {
+export function getHeroPoints() {
 	const charIds = game.users.map(u => u.character?.id).filter(id => id);
 	const actors = charIds.map(id => game.actors.get(id)).filter(a => a);
 
