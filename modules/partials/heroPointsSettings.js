@@ -93,6 +93,7 @@ export const registerHeroPointsSettings = async function (debounceReload) {
 		onChange: debounceReload,
 	});
 
+	/** @deprecated */
 	await game.settings.register(moduleName, 'heroPointsData', {
 		name: 'Hero Points Data',
 		scope: 'world',
@@ -101,6 +102,7 @@ export const registerHeroPointsSettings = async function (debounceReload) {
 		default: null,
 	});
 
+	/** @deprecated */
 	await game.settings.register(moduleName, 'heroPointsLastSet', {
 		name: 'Hero Points Last Set',
 		scope: 'world',
