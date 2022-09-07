@@ -32,6 +32,15 @@ class HeroPointsSettings extends FormApplication {
 					isCheckbox: true,
 					client: game.user.isGM,
 				},
+
+				heroPointsDie: {
+					name: 'Die Size for Hero Points',
+					hint: 'Change the die size when rolling for hero points.',
+					id: 'heroPointsDie',
+					value: game.settings.get(moduleName, 'heroPointsDie'),
+					isNumber: true,
+					client: game.user.isGM,
+				},
 			},
 		};
 
@@ -72,6 +81,15 @@ export const registerHeroPointsSettings = async function (debounceReload) {
 		config: false,
 		default: false,
 		type: Boolean,
+		onChange: debounceReload,
+	});
+
+	await game.settings.register(moduleName, 'heroPointsDie', {
+		name: 'Die for Hero Points',
+		scope: 'world',
+		config: false,
+		default: 6,
+		type: Number,
 		onChange: debounceReload,
 	});
 
