@@ -2,6 +2,7 @@
 //                                    Imports
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 import { moduleName, moduleTag } from '../constants.js';
+import { getHeroPoints } from '../heroPoints.js';
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //                                      Menu
@@ -20,8 +21,21 @@ class HeroPointsSettings extends FormApplication {
 	}
 
 	getData(options = {}) {
+		// Get points + actor names
+		const existingHp = getHeroPoints();
+		const pointsData = [];
+		for (const [id, points] of Object.entries(existingHp)) {
+			const actor = game.actors.get(id);
+			pointsData.push({
+				id,
+				name: actor.name,
+				points,
+			});
+		}
+
 		const data = {
 			isGm: game.user.isGM,
+			points: pointsData,
 			settings: {
 				// Settings for Hero Points
 				useHeroPoints: {
@@ -44,6 +58,7 @@ class HeroPointsSettings extends FormApplication {
 			},
 		};
 
+		console.log(pointsData);
 		return data;
 	}
 
