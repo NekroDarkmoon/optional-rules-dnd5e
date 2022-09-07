@@ -45,7 +45,17 @@ export function getHeroPoints() {
 	return existingHp;
 }
 
-export async function setHeroPoints(data) {}
+export async function setHeroPoints(data) {
+	for (const [id, points] of Object.entries(data)) {
+		// Update flags
+		const actor = game.actors.get(id) ?? null;
+		if (!actor) continue;
+		await actor.setFlag(moduleName, 'heroPoints', points);
+	}
+
+	// Update resources
+	await setupTertiaryResource(data);
+}
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //                            Imports

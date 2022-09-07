@@ -7,6 +7,26 @@
     {{/each}}
   </section>
 
+  {{#if this.isGm}}
+  <hr />
+  <section class="hero-points__container">
+    <h3> Hero Points Management</h3>
+    {{#each this.points}}
+      <div class="form-group">
+        <label> {{this.name}} </label>
+        <div class="form-fields">
+          <input 
+            type="number"
+            name="idx-{{this.id}}"
+            data-dtype="Number"
+            value="{{this.points}}" 
+          />
+        </div>
+      </div>
+    {{/each}}
+  </section>
+  {{/if}}
+
   <footer class="sheet-footer flexrow">
 		<button type="submit" name="submit">
 			<i class="far fa-save"></i> Save

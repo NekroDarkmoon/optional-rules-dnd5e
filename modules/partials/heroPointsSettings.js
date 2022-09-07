@@ -2,7 +2,7 @@
 //                                    Imports
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 import { moduleName, moduleTag } from '../constants.js';
-import { getHeroPoints } from '../heroPoints.js';
+import { getHeroPoints, setHeroPoints } from '../heroPoints.js';
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //                                      Menu
@@ -58,7 +58,6 @@ class HeroPointsSettings extends FormApplication {
 			},
 		};
 
-		console.log(pointsData);
 		return data;
 	}
 
@@ -77,11 +76,20 @@ class HeroPointsSettings extends FormApplication {
 	 */
 	async _updateObject(event, formData) {
 		console.log(formData);
-		for (let [key, value] of Object.entries(formData)) {
-			await game.settings.set(moduleName, key, value);
-		}
+		this.close();
+		const settings = Object.keys(this.getData().settings);
+		const updateData = {};
 
-		this.render();
+		for (let [key, value] of Object.entries(formData)) {
+			if (!key.startsWith('idx-')) continue;
+			const id = key.split('-').pop();
+			updateData[id] = value;
+		}
+		await setHeroPoints(updateData);
+
+		for (const s of settings) {
+			await game.settings.set(moduleName, s, formData[s]);
+		}
 	}
 }
 
