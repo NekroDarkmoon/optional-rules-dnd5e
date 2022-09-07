@@ -130,3 +130,14 @@ async function rollHeroDie(actor, count) {
 		flavor: 'Hero Points',
 	});
 }
+
+async function sendNotification(actor, { prevPoints, value }) {
+	const message = `Hero Points for ${actor.name} increased from ${prevPoints} to ${value}.`;
+
+	await ChatMessage.create({
+		blind: true,
+		speaker: { alias: 'Optional Rules Dnd5e' },
+		content: message,
+		whisper: ChatMessage.getWhisperRecipients('GM'),
+	});
+}
