@@ -9,6 +9,7 @@ const SETTINGS = {
 	adv: !game.settings.get(moduleName, 'useFlankingMod'),
 	mod: game.settings.get(moduleName, 'flankingMod'),
 	size: game.settings.get(moduleName, 'internalCreatureSize'),
+	disposition: -1,
 };
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -100,13 +101,46 @@ class FlankingGrid {
 		// Check if attacker is adjacent to target
 		if (!this.isAdjacent(attacker, target)) return false;
 		console.debug('Adjacency checked.');
+
+		// TODO: add settings for allies and other dispositions
+		// Get adjacent tokens
+		const possibleFlankers = this.getAdjacentTokens(target).filter(
+			t => t.id !== attacker.id
+		);
+		console.log(possibleFlankers);
 	}
 
 	// *********************************************************
 	// Helpers
+	/**
+	 *
+	 * @param {*} attacker
+	 * @param {*} target
+	 * @returns {Boolean}
+	 */
 	isAdjacent(attacker, target) {
 		if (distanceBetween(attacker, target) > 5) return false;
 		return true;
+	}
+
+	/**
+	 *
+	 * @param {*} target
+	 * @returns {Array}
+	 */
+	getAdjacentTokens(target) {
+		// TODO: Allow neutrals
+		const reqDisposition = target.disposition * -1;
+		return (
+			canvas.scene.tokens.filter(t => {
+				if (
+					t?.actor?.system?.attributes?.hp?.value > 0 &&
+					t.disposition === reqDisposition
+				)
+					return this.isAdjacent(target, t);
+				else return false;
+			}) ?? []
+		);
 	}
 }
 
