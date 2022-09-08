@@ -27,7 +27,7 @@ Hooks.once('setup', async function () {
 
 	// Enable Flanking
 	if (game.settings.get(moduleName, 'useFlanking')) {
-		const { flanking } = await import('./modules/flanking.js');
+		const { setupFlanking } = await import('./modules/flanking.js');
 		// Get cross module Compatibility
 		let settings = {
 			midi: game.modules.get('midi-qol')?.active ? true : false,
@@ -39,7 +39,7 @@ Hooks.once('setup', async function () {
 		};
 		console.log(settings);
 
-		await flanking(settings);
+		await setupFlanking(settings);
 		console.info(`${moduleTag} | Loaded Flanking System.`);
 	}
 
