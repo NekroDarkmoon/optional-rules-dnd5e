@@ -2,6 +2,7 @@
 //                           Imports
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 import { moduleName, moduleTag } from './constants.js';
+import { debug, distanceBetween } from './partials/utils.js';
 
 const SETTINGS = {
 	midi: game.modules.get('midi-qol')?.active,
@@ -38,7 +39,7 @@ class FlankingGrid {
 		const selected = canvas?.tokens?.controlled[0];
 		if (!selected) return;
 
-		if (await this.checkFlankingStatus(user, selected, target)) {
+		if (await this.checkFlankingStatus(selected, target)) {
 			const actor = game.actors.get(selected.document.actorId);
 			await actor.setFlag(moduleName, 'flanking', true);
 
@@ -69,9 +70,6 @@ class FlankingGrid {
 		const selected = canvas?.tokens?.controlled[0];
 		if (!selected) return;
 
-		console.log(selected);
-		console.log(selected.actorId);
-
 		const actor = game.actors.get(selected.document.actorId);
 
 		if (actor.getFlag(moduleName, 'flanking')) {
@@ -86,7 +84,30 @@ class FlankingGrid {
 
 	// *********************************************************
 	// Main Functions
-	async checkFlankingStatus(user, attackerData, targetData) {}
+	async checkFlankingStatus({ document: attacker }, { document: target }) {
+		console.log('AttackerData');
+		console.log(attacker);
+		console.log('TargetData');
+		console.log(target);
+
+		// Check target Size
+		if (target.height >= SETTINGS.size) return false;
+		console.debug('Target size checked.');
+
+		if (attacker.disposition === target.disposition) return false;
+		console.debug('Target disposition checked.');
+
+		// Check if attacker is adjacent to target
+		if (!this.isAdjacent(attacker, target)) return false;
+		console.debug('Adjacency checked.');
+	}
+
+	// *********************************************************
+	// Helpers
+	isAdjacent(attacker, target) {
+		if (distanceBetween(attacker, target) > 5) return false;
+		return true;
+	}
 }
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -98,8 +119,9 @@ class FlankingGrid {
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //                        Helper - Adjacent
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//                 Helper - Get Nearby Targets
+//                   Helper - Get Nearby Targets
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //                           Imports
