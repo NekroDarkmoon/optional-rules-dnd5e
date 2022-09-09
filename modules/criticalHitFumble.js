@@ -88,7 +88,7 @@ async function _handleRoll(item, roll) {
 	const thresholdRoll = await new Roll('1d6').roll({ async: true });
 	await thresholdRoll.toMessage();
 
-	if (thresholdRoll.total <= SETTINGS.threshold) return;
+	if (thresholdRoll.total < SETTINGS.threshold) return;
 
 	if (type === 'weapon') return _rollWeapon(isCrit, isFumble);
 	if (type === 'spell') return _rollSpell(isCrit, isFumble);
