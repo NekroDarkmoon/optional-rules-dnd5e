@@ -97,7 +97,7 @@ export class FlankingRay {
 		this.target = target;
 
 		this.distance = this.calcDistance();
-		this.normalized = this.normalized();
+		this.normalized = this.normalize();
 	}
 
 	/**
@@ -117,7 +117,7 @@ export class FlankingRay {
 	 *
 	 * @returns {Array<Number>}
 	 */
-	normalized() {
+	normalize() {
 		const { x: x1, y: y1, z: z1 } = this.origin;
 		const { x: x2, y: y2, z: z2 } = this.target;
 
@@ -131,12 +131,16 @@ export class FlankingRay {
 	 */
 	getFlankingPosition() {
 		const { x: x1, y: y1, z: z1 } = this.target;
-
-		let x = x1 - this.distance * this.normalized[0];
-		let y = y1 - this.distance * this.normalized[1];
-		let z = z1 - this.distance * this.normalized[2];
+		const x = x1 - this.distance * this.normalized[0];
+		const y = y1 - this.distance * this.normalized[1];
+		const z = z1 - this.distance * this.normalized[2];
 
 		return { x, y, z };
+	}
+
+	static getAdjustedFlankingPosition(reqPos, sizeDiff) {
+		let { x, y, z } = reqPos;
+		const gridSize = canvas.grid.size;
 	}
 }
 

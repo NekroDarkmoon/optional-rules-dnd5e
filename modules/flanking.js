@@ -2,7 +2,7 @@
 //                           Imports
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 import { moduleName, moduleTag } from './constants.js';
-import { debug, distanceBetween } from './partials/utils.js';
+import { debug, distanceBetween, FlankingRay } from './partials/utils.js';
 
 const SETTINGS = {
 	midi: game.modules.get('midi-qol')?.active,
@@ -107,7 +107,23 @@ class FlankingGrid {
 		const possibleFlankers = this.getAdjacentTokens(target).filter(
 			t => t.id !== attacker.id
 		);
-		console.log(possibleFlankers);
+		if (!possibleFlankers.length) return false;
+		console.debug('Possible Flankers', possibleFlankers.length);
+
+		// FIXME: Testing
+		// Calculate Flanking ray and relative position of flanker
+		const ray = new FlankingRay(
+			this.getTokenCenter(attacker),
+			this.getTokenCenter(target)
+		);
+		const requiredPosition = ray.getFlankingPosition();
+
+		console.log(requiredPosition);
+		console.log(
+			possibleFlankers.map(a => {
+				return { [a.name]: this.getTokenCenter(a) };
+			})
+		);
 	}
 
 	// *********************************************************
@@ -141,6 +157,11 @@ class FlankingGrid {
 				else return false;
 			}) ?? []
 		);
+	}
+
+	getTokenCenter(token) {
+		const { x, y } = token._object.center;
+		return { x, y, z: 0 };
 	}
 }
 
