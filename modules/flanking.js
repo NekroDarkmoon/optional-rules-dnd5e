@@ -116,16 +116,14 @@ class FlankingGrid {
 			this.getTokenCenter(attacker),
 			this.getTokenCenter(target)
 		);
-		const requiredPosition = ray.getFlankingPosition();
-		const adjustedPositions = possibleFlankers.map(token => {
+		const requiredPositions = possibleFlankers.map(token => {
 			const sizeDiff = this.getSizeDifference(attacker, token);
 			return {
 				name: token.name,
-				pos: ray.getAdjustedFlankingPosition(requiredPosition, sizeDiff),
+				pos: ray.getAdjustedFlankingPosition(sizeDiff),
 			};
 		});
-		console.log(requiredPosition);
-		console.log(adjustedPositions);
+		console.log(requiredPositions);
 		console.log(
 			possibleFlankers.map(a => {
 				return { [a.name]: this.getTokenCenter(a) };

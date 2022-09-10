@@ -1,83 +1,5 @@
 import { moduleName, moduleTag } from '../constants.js';
 let debugLog;
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//                                     TokenChar
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-/**
- * @typedef {Object} Point
- * @property {Number} x
- * @property {Number} y
- * @property {Number} z
- */
-
-/**
- * A class for representing token data needed for Flanking.
- */
-export class TokenChar {
-	constructor(data) {
-		this.data = data;
-		this.gridSize = canvas.grid.size;
-
-		// Calculated data.
-		this.disposition = this.fetchDisposition();
-		this.size = this.fetchSize();
-		this.height = this.fetchHeight(); //Integer representation of size in grid count.
-		this.location = this.calcLocation();
-		this.validPos = this.calcLocation();
-	}
-
-	/**
-	 * @memberof TokenChar
-	 */
-	adjustLocationGrid() {
-		if (this.size > this.gridSize) {
-			this.location = {
-				x: this.location.x + (this.size - this.gridSize) * 0.5,
-				y: this.location.y + (this.size - this.gridSize) * 0.5,
-				z: this.data.data.elevation,
-			};
-		}
-	}
-
-	/**
-	 * @memberof TokenChar
-	 */
-	adjustLocationHex() {}
-
-	/**
-	 * Gets the valid location of a token and adds elevation data to it.
-	 * @returns {Point}
-	 */
-	calcLocation() {
-		const location = JSON.parse(JSON.stringify(this.data._validPosition));
-		location.z = this.data.data.elevation;
-		return location;
-	}
-
-	/**
-	 *
-	 * @returns {Number}
-	 */
-	fetchDisposition() {
-		return this.data.data.disposition;
-	}
-
-	/**
-	 *
-	 * @returns {Number}
-	 */
-	fetchHeight() {
-		return this.data.data.height;
-	}
-
-	/**
-	 *
-	 * @returns {Number}
-	 */
-	fetchSize() {
-		return Math.max(this.data.hitArea.width, this.data.hitArea.height);
-	}
-}
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //                                     TokenChar
@@ -96,15 +18,16 @@ export class FlankingRay {
 		this.origin = origin;
 		this.target = target;
 
-		this.distance = this.calcDistance();
-		this.normalized = this.normalize();
+		this.distance = this._calcDistance();
+		this.normalized = this._normalize();
+		this.reqPos = this._getFlankingPosition();
 	}
 
 	/**
 	 *
 	 * @returns {number}
 	 */
-	calcDistance() {
+	_calcDistance() {
 		const { x: x1, y: y1, z: z1 } = this.origin;
 		const { x: x2, y: y2, z: z2 } = this.target;
 
@@ -117,7 +40,7 @@ export class FlankingRay {
 	 *
 	 * @returns {Array<Number>}
 	 */
-	normalize() {
+	_normalize() {
 		const { x: x1, y: y1, z: z1 } = this.origin;
 		const { x: x2, y: y2, z: z2 } = this.target;
 
@@ -129,7 +52,7 @@ export class FlankingRay {
 	 *
 	 * @returns {import('./lib/utils.js').Point}
 	 */
-	getFlankingPosition() {
+	_getFlankingPosition() {
 		const { x: x1, y: y1, z: z1 } = this.target;
 		const x = x1 - this.distance * this.normalized[0];
 		const y = y1 - this.distance * this.normalized[1];
@@ -138,15 +61,18 @@ export class FlankingRay {
 		return { x, y, z };
 	}
 
-	getAdjustedFlankingPosition(reqPos, sizeDiff) {
-		console.log('sizeDiff', sizeDiff);
-		console.log('sign', Math.sign(this.normalized[0]));
-		let { x, y, z } = reqPos;
+	/**
+	 *
+	 * @returns {import('./lib/utils.js').Point}
+	 */
+	getAdjustedFlankingPosition(sizeDiff) {
+		const { x, y, z } = this.reqPos;
+		const [directionX, directionY, directionZ] = this.normalized.map(Math.sign);
 		const gridSize = canvas.grid.size / 2;
 		return {
-			x: x - gridSize * sizeDiff * Math.sign(this.normalized[0]),
-			y: y - gridSize * sizeDiff * Math.sign(this.normalized[1]),
-			z: z,
+			x: x - gridSize * sizeDiff * directionX,
+			y: y - gridSize * sizeDiff * directionY,
+			z: z - gridSize * sizeDiff * directionZ,
 		};
 	}
 }
@@ -154,7 +80,7 @@ export class FlankingRay {
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //                                    FlankingRay
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-export function distanceBetween(t1, t2, wallBlocks = true) {
+export function distanceBetween(t1, t2) {
 	const t1x = t1.width >= 1 ? 0.5 : t1.width / 2;
 	const t1y = t1.height >= 1 ? 0.5 : t1.height / 2;
 	const t2x = t2.width >= 1 ? 0.5 : t2.width / 2;
@@ -186,8 +112,8 @@ export function distanceBetween(t1, t2, wallBlocks = true) {
 					const ray = new Ray(origin, destination);
 
 					// Check wall blocking
-					if (wallBlocks)
-						if (canvas.walls.checkCollision(ray, { mode: 'any' })) continue;
+					// if (wallBlocks)
+					// 	if (canvas.walls.checkCollision(ray, { mode: 'any' })) continue;
 					segments.push({ ray });
 				}
 			}
