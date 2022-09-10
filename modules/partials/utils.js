@@ -138,9 +138,16 @@ export class FlankingRay {
 		return { x, y, z };
 	}
 
-	static getAdjustedFlankingPosition(reqPos, sizeDiff) {
+	getAdjustedFlankingPosition(reqPos, sizeDiff) {
+		console.log('sizeDiff', sizeDiff);
+		console.log('sign', Math.sign(this.normalized[0]));
 		let { x, y, z } = reqPos;
-		const gridSize = canvas.grid.size;
+		const gridSize = canvas.grid.size / 2;
+		return {
+			x: x - gridSize * sizeDiff * Math.sign(this.normalized[0]),
+			y: y - gridSize * sizeDiff * Math.sign(this.normalized[1]),
+			z: z,
+		};
 	}
 }
 

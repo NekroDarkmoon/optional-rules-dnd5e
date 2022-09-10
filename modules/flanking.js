@@ -117,8 +117,15 @@ class FlankingGrid {
 			this.getTokenCenter(target)
 		);
 		const requiredPosition = ray.getFlankingPosition();
-
+		const adjustedPositions = possibleFlankers.map(token => {
+			const sizeDiff = this.getSizeDifference(attacker, token);
+			return {
+				name: token.name,
+				pos: ray.getAdjustedFlankingPosition(requiredPosition, sizeDiff),
+			};
+		});
 		console.log(requiredPosition);
+		console.log(adjustedPositions);
 		console.log(
 			possibleFlankers.map(a => {
 				return { [a.name]: this.getTokenCenter(a) };
@@ -162,6 +169,10 @@ class FlankingGrid {
 	getTokenCenter(token) {
 		const { x, y } = token._object.center;
 		return { x, y, z: 0 };
+	}
+
+	getSizeDifference(t1, t2) {
+		return t2.height - t1.height;
 	}
 }
 
