@@ -1,8 +1,15 @@
 import { moduleName, moduleTag } from '../constants.js';
 let debugLog;
 
+/**
+ * @typedef {Object} Point
+ * @property {Number} x
+ * @property {Number} y
+ * @property {Number} z
+ */
+
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//                                     TokenChar
+//                                     Debug Log
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 export function debug(msg) {
 	if (!debugLog) debugLog = game.settings.get(moduleName, 'outputDebug');
@@ -50,7 +57,7 @@ export class FlankingRay {
 
 	/**
 	 *
-	 * @returns {import('./lib/utils.js').Point}
+	 * @returns {Point}
 	 */
 	_getFlankingPosition() {
 		const { x: x1, y: y1, z: z1 } = this.target;
@@ -63,7 +70,7 @@ export class FlankingRay {
 
 	/**
 	 *
-	 * @returns {import('./lib/utils.js').Point}
+	 * @returns {Point}
 	 */
 	getAdjustedFlankingPosition(sizeDiff) {
 		const { x, y, z } = this.reqPos;

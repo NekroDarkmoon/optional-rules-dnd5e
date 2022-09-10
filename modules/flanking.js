@@ -110,25 +110,37 @@ class FlankingGrid {
 		if (!possibleFlankers.length) return false;
 		console.debug('Possible Flankers', possibleFlankers.length);
 
-		// FIXME: Testing
 		// Calculate Flanking ray and relative position of flanker
 		const ray = new FlankingRay(
 			this.getTokenCenter(attacker),
 			this.getTokenCenter(target)
 		);
-		const requiredPositions = possibleFlankers.map(token => {
-			const sizeDiff = this.getSizeDifference(attacker, token);
-			return {
-				name: token.name,
-				pos: ray.getAdjustedFlankingPosition(sizeDiff),
-			};
+
+		// Check if possibleFlakers are in a required position.
+		const exists = possibleFlankers.every(token => {
+			console.debug('Checking token: ', token.name);
+			const tokenCenter = this.getTokenCenter(token);
+			const reqPos = ray.getAdjustedFlankingPosition(
+				this.getSizeDifference(attacker, token)
+			);
+
+			// Check if required Position is the same as center
+			if (JSON.stringify(tokenCenter) === JSON.stringify(reqPos)) {
+				console.log('Found');
+
+				// Create chat message
+				ChatMessage.create({
+					speaker: { alias: 'Optional Rules DnD5e' },
+					content: `${attacker.name} & ${token.name} are flanking ${target.name}`,
+				});
+
+				return false;
+			}
+
+			return true;
 		});
-		console.log(requiredPositions);
-		console.log(
-			possibleFlankers.map(a => {
-				return { [a.name]: this.getTokenCenter(a) };
-			})
-		);
+
+		console.log(exists);
 	}
 
 	// *********************************************************
@@ -164,11 +176,21 @@ class FlankingGrid {
 		);
 	}
 
+	/**
+	 * @param {*} token
+	 * @returns {import('./partials/utils.js').Point}
+	 */
 	getTokenCenter(token) {
 		const { x, y } = token._object.center;
 		return { x, y, z: 0 };
 	}
 
+	/**
+	 *
+	 * @param {*} t1
+	 * @param {*} t2
+	 * @returns {Number}
+	 */
 	getSizeDifference(t1, t2) {
 		return t2.height - t1.height;
 	}
