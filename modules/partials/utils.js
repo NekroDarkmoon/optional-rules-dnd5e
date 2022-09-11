@@ -85,13 +85,49 @@ export class FlankingRay {
 }
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//                                    FlankingRay
+//                                 Distance Measuring
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+export function getDistance(t1, t2) {
+	const { x: x1, y: y1 } = t1._object.center;
+	const { x: x2, y: y2 } = t2._object.center;
+
+	const sizeDiff = t2.height - t1.height;
+
+	console.log(sizeDiff);
+	const projectValue = sizeDiff === 0 ? 1 : sizeDiff / 2;
+	console.log(projectValue);
+
+	// console.log(x1, y1, x2, y2);
+	const origin = t1._object.center;
+	const destination = t2._object.center;
+
+	// 	const originalRay = new Ray(origin, destination);
+	// 	const adjustedRay = new Ray(
+	// 		origin,
+	// 		originalRay.project(projectValue * Math.sign(originalRay.slope))
+	// 	);
+
+	// 	console.log(originalRay);
+	// 	console.log(
+	// 		canvas.grid.measureDistances([{ ray: originalRay }], { gridSpaces: true })
+	// 	);
+
+	// 	console.log(adjustedRay);
+	// 	console.log(
+	// 		canvas.grid.measureDistances([{ ray: adjustedRay }], { gridSpaces: true })
+	// 	);
+}
+
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//                                 Distance Measuring
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 export function distanceBetween(t1, t2) {
-	const t1x = t1.width >= 1 ? 0.5 : t1.width / 2;
-	const t1y = t1.height >= 1 ? 0.5 : t1.height / 2;
-	const t2x = t2.width >= 1 ? 0.5 : t2.width / 2;
-	const t2y = t2.height >= 1 ? 0.5 : t2.height / 2;
+	const { width: t1Width, height: t1Height, elevation: t1e } = t1;
+	const { width: t2Width, height: t2Height, elevation: t2e } = t2;
+
+	const [t1x, t1y, t2x, t2y] = [t1Width, t1Height, t2Width, t2Height].map(d =>
+		d >= 1 ? 0.5 : d / 2
+	);
 
 	// Start loop for t1
 	const segments = [];
@@ -128,20 +164,18 @@ export function distanceBetween(t1, t2) {
 	}
 
 	// Check if ray exists
-	if (!segments.length) return -1;
-	const rayDistances = segments.map(
-		ray => canvas.grid.measureDistances([ray], { gridSpaces: true })[0]
-	);
+	if (!segments.length) return null;
+	const rayDistances = canvas.grid.measureDistances(segments, {
+		gridSpaces: true,
+	});
 	let distance = Math.min(...rayDistances);
 
 	// Account for Elevation
 	const sceneSquare = canvas?.dimensions?.distance ?? 5;
-	const t1e = t1.elevation ?? 0;
-	const t2e = t2.elevation ?? 0;
-	const t1TotalE = t1e + t1.height * sceneSquare;
-	const t2TotalE = t2e + t2.height * sceneSquare;
+	const t1TotalE = t1e + t1Height * sceneSquare;
+	const t2TotalE = t2e + t2Height * sceneSquare;
 	let heightDifference = 0;
-	const elevationRange = Math.max(t1.height, t1.width) * sceneSquare;
+	const elevationRange = Math.max(t1Height, t1Width) * sceneSquare;
 
 	if (Math.abs(t2e - t1e) < elevationRange) heightDifference = 0;
 	else if (t1e > t2e) heightDifference = t1e - t2TotalE;

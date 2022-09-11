@@ -2,7 +2,12 @@
 //                           Imports
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 import { moduleName, moduleTag } from './constants.js';
-import { debug, distanceBetween, FlankingRay } from './partials/utils.js';
+import {
+	debug,
+	distanceBetween,
+	getDistance,
+	FlankingRay,
+} from './partials/utils.js';
 
 const SETTINGS = {
 	midi: game.modules.get('midi-qol')?.active,
@@ -99,6 +104,7 @@ class FlankingGrid {
 		console.debug('Target disposition checked.');
 
 		// Check if attacker is adjacent to target
+		getDistance(attacker, target);
 		if (!this.isAdjacent(attacker, target)) return false;
 		console.debug('Adjacency checked.');
 
@@ -117,7 +123,7 @@ class FlankingGrid {
 		);
 
 		// Check if possibleFlakers are in a required position.
-		const exists = possibleFlankers.every(token => {
+		const exists = !possibleFlankers.every(token => {
 			console.debug('Checking token: ', token.name);
 			const tokenCenter = this.getTokenCenter(token);
 			const reqPos = ray.getAdjustedFlankingPosition(
@@ -126,8 +132,6 @@ class FlankingGrid {
 
 			// Check if required Position is the same as center
 			if (JSON.stringify(tokenCenter) === JSON.stringify(reqPos)) {
-				console.log('Found');
-
 				// Create chat message
 				ChatMessage.create({
 					speaker: { alias: 'Optional Rules DnD5e' },
@@ -141,6 +145,7 @@ class FlankingGrid {
 		});
 
 		console.log(exists);
+		// return exists;
 	}
 
 	// *********************************************************
@@ -152,7 +157,8 @@ class FlankingGrid {
 	 * @returns {Boolean}
 	 */
 	isAdjacent(attacker, target) {
-		if (distanceBetween(attacker, target) > 5) return false;
+		const distance = distanceBetween(attacker, target);
+		if (distance && distance > 5) return false;
 		return true;
 	}
 
