@@ -41,6 +41,15 @@ class FlankingSettings extends FormApplication {
 					client: game.user.isGM,
 				},
 
+				flankNeutrals: {
+					name: 'Enable Flanking for neutral tokens',
+					hint: 'Allows flanker to be either neutral token or an ally.',
+					id: 'flankNeutrals',
+					value: game.settings.get(moduleName, 'flankNeutrals'),
+					isCheckbox: true,
+					client: game.user.isGM,
+				},
+
 				useFlankingMod: {
 					name: 'Variant Rule - Use Modifiers',
 					hint: 'Use modifiers instead of giving advantage when flanking.',
@@ -170,7 +179,7 @@ export const registerFlankingSettings = async function (debounceReload) {
 	});
 
 	await game.settings.register(moduleName, 'creatureSize', {
-		name: 'Flank based on creature Size',
+		name: 'Restrict Flanking based on creature size',
 		scope: 'world',
 		config: false,
 		type: String,
@@ -188,7 +197,15 @@ export const registerFlankingSettings = async function (debounceReload) {
 	});
 
 	await game.settings.register(moduleName, 'flankSizeDiff', {
-		name: '[Experimental] Enable flanking across creature sizes',
+		name: 'Enable flanking across creature sizes',
+		scope: 'world',
+		config: false,
+		type: Boolean,
+		default: false,
+	});
+
+	await game.settings.register(moduleName, 'flankNeutrals', {
+		name: 'Enable flanking for neutrals',
 		scope: 'world',
 		config: false,
 		type: Boolean,
