@@ -2,12 +2,7 @@
 //                           Imports
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 import { moduleName, moduleTag } from './constants.js';
-import {
-	debug,
-	distanceBetween,
-	getDistance,
-	FlankingRay,
-} from './partials/utils.js';
+import { debug, isAdjacent, FlankingRay } from './partials/utils.js';
 
 const SETTINGS = {
 	midi: game.modules.get('midi-qol')?.active,
@@ -104,7 +99,6 @@ class FlankingGrid {
 		console.debug('Target disposition checked.');
 
 		// Check if attacker is adjacent to target
-		getDistance(attacker, target);
 		if (!this.isAdjacent(attacker, target)) return false;
 		console.debug('Adjacency checked.');
 
@@ -157,9 +151,8 @@ class FlankingGrid {
 	 * @returns {Boolean}
 	 */
 	isAdjacent(attacker, target) {
-		const distance = distanceBetween(attacker, target);
-		if (distance && distance > 5) return false;
-		return true;
+		// FIXME: INLINE
+		return isAdjacent(attacker, target);
 	}
 
 	/**

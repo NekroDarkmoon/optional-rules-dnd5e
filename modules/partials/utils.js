@@ -87,113 +87,108 @@ export class FlankingRay {
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //                                 Distance Measuring
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-export function getDistance(t1, t2) {
-	const { x: x1, y: y1 } = t1._object.center;
-	const { x: x2, y: y2 } = t2._object.center;
+export function isAdjacent(t1, t2) {
+	// Create ray from t1 center to t2 center
+	const ray = new Ray(t1._object.center, t2._object.center);
+	// console.debug(ray);
+	// console.debug('Distance: ', ray.distance);
 
-	const sizeDiff = t2.height - t1.height;
+	// Get diagonal distance
+	const gridScale = canvas?.grid?.size / 2;
+	const t1Size = Math.max(t1.width, t1.height);
+	const t2Size = Math.max(t2.width, t2.height);
+	const diagonal = Math.sqrt(2 * Math.pow(gridScale * (t1Size + t2Size), 2));
 
-	console.log(sizeDiff);
-	const projectValue = sizeDiff === 0 ? 1 : sizeDiff / 2;
-	console.log(projectValue);
+	// console.debug('Diagonal Distance: ', diagonal);
 
-	// console.log(x1, y1, x2, y2);
-	const origin = t1._object.center;
-	const destination = t2._object.center;
+	// Return if dx > diagonal || dy > diagonal
+	// console.debug('dx > diagonal: ', ray.dx > diagonal);
+	// console.debug('dy > diagonal: ', ray.dy > diagonal);
 
-	// 	const originalRay = new Ray(origin, destination);
-	// 	const adjustedRay = new Ray(
-	// 		origin,
-	// 		originalRay.project(projectValue * Math.sign(originalRay.slope))
-	// 	);
+	if (ray.dx > diagonal || ray.dy > diagonal) return false;
 
-	// 	console.log(originalRay);
-	// 	console.log(
-	// 		canvas.grid.measureDistances([{ ray: originalRay }], { gridSpaces: true })
-	// 	);
+	// Check if diagonal
+	if (diagonal === ray.distance && Math.abs(ray.slope) !== 1) return false;
 
-	// 	console.log(adjustedRay);
-	// 	console.log(
-	// 		canvas.grid.measureDistances([{ ray: adjustedRay }], { gridSpaces: true })
-	// 	);
+	return ray.distance <= diagonal;
 }
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //                                 Distance Measuring
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-export function distanceBetween(t1, t2) {
-	const { width: t1Width, height: t1Height, elevation: t1e } = t1;
-	const { width: t2Width, height: t2Height, elevation: t2e } = t2;
+// export function distanceBetween(t1, t2) {
+// 	const { width: t1Width, height: t1Height, elevation: t1e } = t1;
+// 	const { width: t2Width, height: t2Height, elevation: t2e } = t2;
 
-	const [t1x, t1y, t2x, t2y] = [t1Width, t1Height, t2Width, t2Height].map(d =>
-		d >= 1 ? 0.5 : d / 2
-	);
+// 	const [t1x, t1y, t2x, t2y] = [t1Width, t1Height, t2Width, t2Height].map(d =>
+// 		d >= 1 ? 0.5 : d / 2
+// 	);
 
-	// Start loop for t1
-	const segments = [];
-	for (let x0 = t1x; x0 < t1.width; x0++) {
-		for (let y0 = t1y; y0 < t1.height; y0++) {
-			// Get Origin Point
-			const origin = new PIXI.Point(
-				...canvas.grid.getCenter(
-					Math.round(t1.x + canvas.dimensions.size * x0),
-					Math.round(t1.y + canvas.dimensions.size * y0)
-				)
-			);
+// 	// Start loop for t1
+// 	const segments = [];
+// 	for (let x0 = t1x; x0 < t1.width; x0++) {
+// 		for (let y0 = t1y; y0 < t1.height; y0++) {
+// 			// Get Origin Point
+// 			const origin = new PIXI.Point(
+// 				...canvas.grid.getCenter(
+// 					Math.round(t1.x + canvas.dimensions.size * x0),
+// 					Math.round(t1.y + canvas.dimensions.size * y0)
+// 				)
+// 			);
 
-			// Start loop for t2
-			for (let x1 = t2x; x1 < t2.width; x1++) {
-				for (let y1 = t2y; y1 < t2.height; y1++) {
-					// Get Destination point
-					const destination = new PIXI.Point(
-						...canvas.grid.getCenter(
-							Math.round(t2.x + canvas.dimensions.size * x1),
-							Math.round(t2.y + canvas.dimensions.size * y1)
-						)
-					);
+// 			// Start loop for t2
+// 			for (let x1 = t2x; x1 < t2.width; x1++) {
+// 				for (let y1 = t2y; y1 < t2.height; y1++) {
+// 					// Get Destination point
+// 					const destination = new PIXI.Point(
+// 						...canvas.grid.getCenter(
+// 							Math.round(t2.x + canvas.dimensions.size * x1),
+// 							Math.round(t2.y + canvas.dimensions.size * y1)
+// 						)
+// 					);
 
-					const ray = new Ray(origin, destination);
+// 					const ray = new Ray(origin, destination);
 
-					// Check wall blocking
-					// if (wallBlocks)
-					// 	if (canvas.walls.checkCollision(ray, { mode: 'any' })) continue;
-					segments.push({ ray });
-				}
-			}
-		}
-	}
+// 					// Check wall blocking
+// 					// if (wallBlocks)
+// 					// 	if (canvas.walls.checkCollision(ray, { mode: 'any' })) continue;
+// 					segments.push({ ray });
+// 				}
+// 			}
+// 		}
+// 	}
 
-	// Check if ray exists
-	if (!segments.length) return null;
-	const rayDistances = canvas.grid.measureDistances(segments, {
-		gridSpaces: true,
-	});
-	let distance = Math.min(...rayDistances);
+// 	// Check if ray exists
+// 	if (!segments.length) return null;
+// 	const rayDistances = canvas.grid.measureDistances(segments, {
+// 		gridSpaces: true,
+// 	});
+// 	let distance = Math.min(...rayDistances);
 
-	// Account for Elevation
-	const sceneSquare = canvas?.dimensions?.distance ?? 5;
-	const t1TotalE = t1e + t1Height * sceneSquare;
-	const t2TotalE = t2e + t2Height * sceneSquare;
-	let heightDifference = 0;
-	const elevationRange = Math.max(t1Height, t1Width) * sceneSquare;
+// 	// Account for Elevation
+// 	const sceneSquare = canvas?.dimensions?.distance ?? 5;
+// 	const t1TotalE = t1e + t1Height * sceneSquare;
+// 	const t2TotalE = t2e + t2Height * sceneSquare;
+// 	let heightDifference = 0;
+// 	const elevationRange = Math.max(t1Height, t1Width) * sceneSquare;
 
-	if (Math.abs(t2e - t1e) < elevationRange) heightDifference = 0;
-	else if (t1e > t2e) heightDifference = t1e - t2TotalE;
-	else if (t2e > t1e) heightDifference = t2e - t1TotalE;
+// 	if (Math.abs(t2e - t1e) < elevationRange) heightDifference = 0;
+// 	else if (t1e > t2e) heightDifference = t1e - t2TotalE;
+// 	else if (t2e > t1e) heightDifference = t2e - t1TotalE;
 
-	const rule = canvas.grid.diagonalRule;
-	if (['5105', '555'].includes(rule)) {
-		let nd = Math.min(distance, heightDifference);
-		let ns = Math.abs(distance - heightDifference);
-		distance = nd + ns;
-		let dimension = canvas?.dimensions?.distance ?? 5;
-		if (rule === '5105')
-			distance = distance + Math.floor(nd / 2 / dimension) * dimension;
-	} else {
-		distance = Math.sqrt(
-			heightDifference * heightDifference + distance * distance
-		);
-	}
+// 	const rule = canvas.grid.diagonalRule;
+// 	if (['5105', '555'].includes(rule)) {
+// 		let nd = Math.min(distance, heightDifference);
+// 		let ns = Math.abs(distance - heightDifference);
+// 		distance = nd + ns;
+// 		let dimension = canvas?.dimensions?.distance ?? 5;
+// 		if (rule === '5105')
+// 			distance = distance + Math.floor(nd / 2 / dimension) * dimension;
+// 	} else {
+// 		distance = Math.sqrt(
+// 			heightDifference * heightDifference + distance * distance
+// 		);
+// 	}
 
-	return distance;
-}
+// 	return distance;
+// }
