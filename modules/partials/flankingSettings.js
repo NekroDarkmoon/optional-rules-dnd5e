@@ -34,7 +34,7 @@ class FlankingSettings extends FormApplication {
 
 				flankSizeDiff: {
 					name: 'Flank across creature sizes',
-					hint: '[Experimental] Allow flanking when the attacker and the ally are of different sizes.',
+					hint: 'Allow flanking when the attacker and the ally are of different sizes.',
 					id: 'flankSizeDiff',
 					value: game.settings.get(moduleName, 'flankSizeDiff'),
 					isCheckbox: true,
@@ -60,8 +60,8 @@ class FlankingSettings extends FormApplication {
 				},
 
 				creatureSize: {
-					name: 'Flank Based on creature size',
-					hint: 'Restrict flanking target to a creature of size x and below.',
+					name: 'Restrict Flanking based on creature size',
+					hint: 'Targets of the selected size and greater cannot be flanked.',
 					id: 'creatureSize',
 					value: game.settings.get(moduleName, 'creatureSize'),
 					isChoice: true,
