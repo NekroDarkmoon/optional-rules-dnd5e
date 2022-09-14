@@ -109,28 +109,23 @@ class FlankingGrid {
 	// *********************************************************
 	// Main Functions
 	async checkFlankingStatus({ document: attacker }, { document: target }) {
-		console.log('AttackerData');
-		console.log(attacker);
-		console.log('TargetData');
-		console.log(target);
-
 		// Check target Size
 		if (target.height >= SETTINGS.size) return false;
-		console.debug('Target size checked.');
+		debug('Target size checked.');
 
 		if (attacker.disposition === target.disposition) return false;
-		console.debug('Target disposition checked.');
+		debug('Target disposition checked.');
 
 		// Check if attacker is adjacent to target
 		if (!this.isAdjacent(attacker, target)) return false;
-		console.debug('Attacker Adjacency checked.');
+		debug('Attacker Adjacency checked.');
 
 		// Get adjacent tokens
 		const possibleFlankers = this.getAdjacentTokens(target).filter(
 			t => t.id !== attacker.id
 		);
 		if (!possibleFlankers.length) return false;
-		console.debug('Possible Flankers', possibleFlankers.length);
+		debug('Possible Flankers', possibleFlankers.length);
 
 		// Calculate Flanking ray and relative position of flanker
 		const ray = new FlankingRay(
@@ -140,7 +135,7 @@ class FlankingGrid {
 
 		// Check if possibleFlakers are in a required position.
 		const exists = !possibleFlankers.every(token => {
-			console.debug('Checking token: ', token.name);
+			debug('Checking token: ', token.name);
 			const tokenCenter = this.getTokenCenter(token);
 			const reqPos = ray.getAdjustedFlankingPosition(
 				this.getSizeDifference(attacker, token)
@@ -160,7 +155,7 @@ class FlankingGrid {
 			return true;
 		});
 
-		console.log(exists);
+		debug(exists);
 		return exists;
 	}
 
