@@ -2,6 +2,7 @@
 //                           Imports
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 import { moduleName, moduleTag } from './constants.js';
+import { attackRoll, getAttackToHit, setModifier } from './lib/patches.js';
 import { debug, isAdjacent, FlankingRay } from './partials/utils.js';
 
 const SETTINGS = {
@@ -9,7 +10,7 @@ const SETTINGS = {
 	adv: !game.settings.get(moduleName, 'useFlankingMod'),
 	mod: game.settings.get(moduleName, 'flankingMod'),
 	size: game.settings.get(moduleName, 'internalCreatureSize'),
-	disposition: -1,
+	allowNeutrals: game.settings.get(moduleName, 'flankNeutrals'),
 };
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -17,8 +18,30 @@ const SETTINGS = {
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 export async function setupFlanking() {
 	const flanking = new FlankingGrid();
+	await setModifier();
 
 	// LibWrapper
+	if (!SETTINGS.midi && SETTINGS.adv) {
+		libWrapper.register(
+			moduleName,
+			'CONFIG.Item.documentClass.prototype.rollAttack',
+			attackRoll,
+			'WRAPPER'
+		);
+
+		console.log(`${moduleTag} | Rolling with adv`);
+	}
+
+	if (!SETTINGS.adv) {
+		libWrapper.register(
+			moduleName,
+			'CONFIG.Item.documentClass.prototype.getAttackToHit',
+			getAttackToHit,
+			'MIXED',
+			{ chain: true }
+		);
+		console.log(`${moduleTag} | Patching for flanking modifier.`);
+	}
 }
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -100,9 +123,8 @@ class FlankingGrid {
 
 		// Check if attacker is adjacent to target
 		if (!this.isAdjacent(attacker, target)) return false;
-		console.debug('Adjacency checked.');
+		console.debug('Attacker Adjacency checked.');
 
-		// TODO: add settings for allies and other dispositions
 		// Get adjacent tokens
 		const possibleFlankers = this.getAdjacentTokens(target).filter(
 			t => t.id !== attacker.id
@@ -139,7 +161,7 @@ class FlankingGrid {
 		});
 
 		console.log(exists);
-		// return exists;
+		return exists;
 	}
 
 	// *********************************************************
@@ -161,14 +183,13 @@ class FlankingGrid {
 	 * @returns {Array}
 	 */
 	getAdjacentTokens(target) {
-		// TODO: Allow neutrals
 		const reqDisposition = target.disposition * -1;
 		return (
 			canvas.scene.tokens.filter(t => {
-				if (
-					t?.actor?.system?.attributes?.hp?.value > 0 &&
-					t.disposition === reqDisposition
-				)
+				const isNeutral = SETTINGS.allowNeutrals && t.disposition === 0;
+				const matchDisposition = t.disposition === reqDisposition || isNeutral;
+
+				if (t?.actor?.system?.attributes?.hp?.value > 0 && matchDisposition)
 					return this.isAdjacent(target, t);
 				else return false;
 			}) ?? []

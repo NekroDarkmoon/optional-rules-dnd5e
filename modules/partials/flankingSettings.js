@@ -202,6 +202,7 @@ export const registerFlankingSettings = async function (debounceReload) {
 		config: false,
 		type: Boolean,
 		default: false,
+		onChange: debounceReload,
 	});
 
 	await game.settings.register(moduleName, 'flankNeutrals', {
@@ -210,6 +211,7 @@ export const registerFlankingSettings = async function (debounceReload) {
 		config: false,
 		type: Boolean,
 		default: false,
+		onChange: debounceReload,
 	});
 
 	await game.settings.registerMenu(moduleName, 'FlankingSettingsMenu', {
