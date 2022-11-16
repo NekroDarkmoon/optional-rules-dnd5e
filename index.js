@@ -36,6 +36,7 @@ Hooks.once('setup', async function () {
 				: true,
 			mod: await game.settings.get(moduleName, 'flankingMod'),
 			size: await game.settings.get(moduleName, 'internalCreatureSize'),
+			disableCard: await game.settings.get(moduleName, 'flankingDisableCard'),
 		};
 		console.log(settings);
 

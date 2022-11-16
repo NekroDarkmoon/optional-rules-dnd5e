@@ -85,6 +85,15 @@ class FlankingSettings extends FormApplication {
 					],
 					client: game.user.isGM,
 				},
+
+				flankingDisableCard: {
+					name: 'Disable Chat Card',
+					hint: 'Disables the card sent when flanking is confirmed.',
+					id: 'flankingDisableCard',
+					value: game.settings.get(moduleName, 'flankingDisableCard'),
+					isCheckbox: true,
+					client: game.user.isGM,
+				},
 			},
 		};
 
@@ -207,6 +216,15 @@ export const registerFlankingSettings = async function (debounceReload) {
 
 	await game.settings.register(moduleName, 'flankNeutrals', {
 		name: 'Enable flanking for neutrals',
+		scope: 'world',
+		config: false,
+		type: Boolean,
+		default: false,
+		onChange: debounceReload,
+	});
+
+	await game.settings.register(moduleName, 'flankingDisableCard', {
+		name: 'Disable Chat Card',
 		scope: 'world',
 		config: false,
 		type: Boolean,

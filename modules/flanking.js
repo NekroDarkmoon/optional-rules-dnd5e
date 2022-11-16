@@ -11,6 +11,7 @@ const SETTINGS = {
 	mod: game.settings.get(moduleName, 'flankingMod'),
 	size: game.settings.get(moduleName, 'internalCreatureSize'),
 	allowNeutrals: game.settings.get(moduleName, 'flankNeutrals'),
+	disableCard: game.settings.get(moduleName, 'flankingDisableCard'),
 };
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -145,7 +146,9 @@ class FlankingGrid {
 
 			// Check if required Position is the same as center
 			if (JSON.stringify(tokenCenter) === JSON.stringify(reqPos)) {
-				// Create chat message
+				// Optionally Create chat message
+				if (SETTINGS.disableCard) return false;
+
 				ChatMessage.create({
 					speaker: { alias: 'Optional Rules DnD5e' },
 					content: `${attacker.name} & ${token.name} are flanking ${target.name}`,
