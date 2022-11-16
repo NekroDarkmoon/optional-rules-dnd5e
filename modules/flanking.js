@@ -56,6 +56,8 @@ class FlankingGrid {
 	// *********************************************************
 	// Hooks and Helpers
 	async onTarget(user, target, state) {
+		if (user.id !== game.userId) return;
+
 		// Remove flanking status if target is removed.
 		if (!state) return await this.removeFlankingFlag();
 
