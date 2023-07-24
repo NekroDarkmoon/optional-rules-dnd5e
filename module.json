@@ -13,15 +13,22 @@
     }
   ],
   "compatibility": {
-    "minimum": 10,
-    "verified": 10.284,
-    "maximum": 10
+    "minimum": "10",
+    "verified": "10.284"
   },
   "relationships": {
-    "requires": [{
-      "id": "lib-wrapper",
-      "type": "module"
-    }]
+    "requires": [
+      {
+        "id": "lib-wrapper",
+        "type": "module"
+      }
+    ],
+    "systems": [
+      {
+        "id": "dnd5e",
+        "type": "system"
+      }
+    ]
   },
   "esmodules": [
     "index.js"
@@ -29,7 +36,6 @@
   "styles": [
     "/styles/module.css"
   ],
-  "system": ["dnd5e"],
   "languages": [
     {
       "lang": "en",
@@ -45,8 +51,5 @@
       "type": "icon",
       "url": ""
     }
-  ],
-  "name": "optional-rules-dnd5e",
-  "minimumCoreVersion": 10,
-  "compatibleCoreVersion": 10
+  ]
 }
