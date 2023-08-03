@@ -50,6 +50,60 @@ class CHFSettings extends FormApplication {
 					isCheckbox: true,
 					client: game.user.isGM,
 				},
+
+				mainCritTable: {
+					name: 'Main Critical hit rolltable',
+					hint: 'Choose the main rolltable to use for critical hits.',
+					id: 'mainCritTable',
+					value: game.settings.get(moduleName, 'mainCritTable'),
+					isString: true,
+					client: game.user.isGM,
+				},
+
+				mainFumbleTable: {
+					name: 'Main Fumble rolltable',
+					hint: 'Choose the main rolltable to use for critical fumbles.',
+					id: 'mainFumbleTable',
+					value: game.settings.get(moduleName, 'mainFumbleTable'),
+					isString: true,
+					client: game.user.isGM,
+				},
+
+				meleeCritTable: {
+					name: 'Melee Critical hit rolltable',
+					hint: 'Choose the rolltable to use for melee critical hits.',
+					id: 'meleeCritTable',
+					value: game.settings.get(moduleName, 'meleeCritTable'),
+					isString: true,
+					client: game.user.isGM,
+				},
+
+				meleeFumbleTable: {
+					name: 'Melee Critical fumble rolltable',
+					hint: 'Choose the rolltable to use for melee critical fumbles.',
+					id: 'meleeFumbleTable',
+					value: game.settings.get(moduleName, 'meleeFumbleTable'),
+					isString: true,
+					client: game.user.isGM,
+				},
+
+				spellCritTable: {
+					name: 'Spell Critical hit rolltable',
+					hint: 'Choose the rolltable to use for spell critical hits.',
+					id: 'spellCritTable',
+					value: game.settings.get(moduleName, 'spellCritTable'),
+					isString: true,
+					client: game.user.isGM,
+				},
+
+				spellFumbleTable: {
+					name: 'Spell Critical fumble rolltable',
+					hint: 'Choose the rolltable to use for spell critical fumbles.',
+					id: 'spellFumbleTable',
+					value: game.settings.get(moduleName, 'spellFumbleTable'),
+					isString: true,
+					client: game.user.isGM,
+				}
 			},
 			tables: {},
 		};
