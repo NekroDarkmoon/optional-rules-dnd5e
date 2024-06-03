@@ -67,7 +67,7 @@ class FlankingGrid {
 		if (!selected) return;
 
 		if (await this.checkFlankingStatus(selected, target)) {
-			const actor = game.actors.get(selected.document.actorId);
+			const actor = selected.document.actor;
 			await actor.setFlag(moduleName, 'flanking', true);
 
 			if (SETTINGS.midi && SETTINGS.adv)
@@ -83,11 +83,11 @@ class FlankingGrid {
 		if (!actor) return;
 
 		if (!actor.getFlag(moduleName, 'flanking')) return;
-		await actor.setFlag(moduleName, 'flanking', false);
+		await actor.unsetFlag(moduleName, 'flanking', false);
 
 		if (!SETTINGS.midi && SETTINGS.adv) return;
 		if (!actor.getFlag('midi-qol', 'advantage.attack.mwak')) return;
-		await actor.setFlag('midi-qol', 'advantage.attack.mwak', false);
+		await actor.unsetFlag('midi-qol', 'advantage.attack.mwak', false);
 
 		console.info(`${moduleTag} | Flanking condition Removed.`);
 		return;
@@ -97,13 +97,13 @@ class FlankingGrid {
 		const selected = canvas?.tokens?.controlled[0];
 		if (!selected) return;
 
-		const actor = game.actors.get(selected.document.actorId);
+		const actor = selected.document.actor;
 
 		if (actor.getFlag(moduleName, 'flanking')) {
-			await actor.setFlag(moduleName, 'flanking', false);
+			await actor.unsetFlag(moduleName, 'flanking', false);
 
 			if (SETTINGS.midi && SETTINGS.adv)
-				await actor.setFlag('midi-qol', 'advantage.attack.mwak', false);
+				await actor.unsetFlag('midi-qol', 'advantage.attack.mwak', false);
 
 			console.log(`${moduleTag} | Flanking condition Removed.`);
 		}
@@ -216,31 +216,3 @@ class FlankingGrid {
 	}
 }
 
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//                           Imports
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//                           Imports
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//                        Helper - Adjacent
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//                   Helper - Get Nearby Targets
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//                           Imports
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//                           Imports
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//                           Imports
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//                           Imports
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//                           Imports
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
